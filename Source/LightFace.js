@@ -7,13 +7,13 @@
 	
 	To Do
 	-----------------------------
-		More explicit load system:  loadImage
-									loadRequest
-									loadIFrame
-									loadContent
+		Change to diff classes:
+			LightFace
+			LightFace.IFrame
+			LightFace.Request
+			LightFace.Image
 		
-		
-		
+		Remove "+px" stuff
 		Better Sizing system
 		More clear show/open/close/hide
 		
@@ -38,7 +38,7 @@ var LightFace = new Class({
 		draggable: false, 			//wtf?
 		title: '',
 		buttons: [],
-		fadeDelay: 250,
+		fadeDelay: 150,
 		fadeDuration: 500,
 		request: {
 			url: false
@@ -65,10 +65,9 @@ var LightFace = new Class({
 	
 	initialize: function(options) {
 		this.setOptions(options);
+		this.state = false;
 		this.buttons = {};
 		this.draw();
-		if(this.options.request.url) this.load(this.options.request.url);
-		this.attachEvents();
 	},
 	
 	draw: function() {
@@ -98,7 +97,7 @@ var LightFace = new Class({
 					this.contentBox = new Element('div',{
 						'class': 'lightfaceContent',
 						styles: {
-							width: this.options.width
+							//width: this.options.width
 						}
 					});
 					cell.setStyle('opacity',1).appendChild(this.contentBox);
@@ -121,10 +120,10 @@ var LightFace = new Class({
 		
 		//draw title
 		if(this.options.title) {
+			console.log('title is: ' + this.options.title);
 			this.title = new Element('h2',{
-				html: this.options.title,
 				'class': 'lightfaceTitle'
-			}).inject(this.contentBox);
+			}).set('html',this.options.title).inject(this.contentBox);
 			if(this.options.draggable && $defined(window['Drag']) && $defined(window['Drag.Move'])) {
 				new Drag.Move(this.box,{ handle: this.title });
 				this.title.addClass('lightfaceDraggable');
@@ -135,7 +134,6 @@ var LightFace = new Class({
 		if(!isNaN(this.options.height)) { this.options.height = this.options.height + 'px'; }
 		this.messageBox = new Element('div',{
 			'class': 'lightfaceMessageBox',
-			html: this.options.content,
 			styles: {
 				height: this.options.height
 			}
@@ -170,44 +168,47 @@ var LightFace = new Class({
 				click: clickEvent || this.close.bind(this)
 			}
 		}).inject(this.footer));
-		
+		return this.buttons[title];
 	},
 	showButton: function(title) {
 		if(this.buttons[title]) this.buttons[title].setStyle('display','');
+		return this.buttons[title];
 	},
 	hideButton: function(title) {
 		if(this.buttons[title]) this.buttons[title].setStyle('display','none');
+		return this.buttons[title];
 	},
 	
-	show: function() {
-		this._resize();
-		this.box.morph({ opacity: 1 });
-		this.fireEvent('show');
+	/*
+		SHOWING, HIDING, FADING
+	*/
+	
+	close: function(fast) {
+		if(this.isOpen) {
+			this.box[fast ? 'setStyle' : 'tween']('opacity',0);
+			this.fireEvent('close');
+			this.detachEvents();
+			this.isOpen = false;
+		}
 		return this;
 	},
 	
-	hide: function() {
-		this.box.morph({ opacity: 0 });
-		this.fireEvent('hide');
+	open: function(fast) {
+		if(!this.isOpen) {
+			this.box[fast ? 'setStyle' : 'tween']('opacity',1);
+			this._resize();
+			this.fireEvent('open');
+			this.attachEvents();
+			this.box.setAttribute('tabIndex',0);
+			this.box.focus();
+			this.isOpen = true;
+		}
 		return this;
 	},
 	
-	close: function() {
-		this.box.setStyle('opacity',0);
-		this.fireEvent('close');
-		this.detachEvents();
-		return this;
-	},
-	
-	open: function() {
-		this._resize();
-		thix.box.setStyle('opacity',1);
-		this.fireEvent('open');
-		this.box.setAttribute('tabIndex',0).focus();
-		return this;
-	},
-	
-	/* shows and hides overlay */
+	/*
+		SHOWS AND HIDES THE OVERLAY
+	*/
 	fade: function(fade) {
 		this.overlay.setStyle('opacity',fade || 1);
 		this.fireEvent('fade');
@@ -225,60 +226,14 @@ var LightFace = new Class({
 	/*
 		LOADING AND SETTING OF CONTENT
 	*/
-	
-	load: function(url) {
-		
-		if(typeof url != 'string') url = url.url;
-		
-		if(url && ['png','jpg','jpeg','gif'].contains(url.substr(url.lastIndexOf('.') + 1,url.length))) {
-			this.handleImage(url);
-		}
-		else {
-			this.handleRequest(url);
-		}
-		return this;
-	},
-	
-	setContent: function(content,title) {
+	load: function(content,title) {
 		this.messageBox.set('html',content);
 		if(title) this.title.set('html',title);
-		this._resize();
 		this.fireEvent('complete');
 		return this;
 	},
 	
-	handleImage: function(url) {
-		if(!this.image) {
-			this.messageBox.set('html','');
-			this.image = new Element('img',{
-				events: {
-					click: function() {
-						this.hide();
-					}.bind(this),
-					error: function() {
-						this.unfade();
-						this.messageBox.set('html',this.options.errorMessage);
-						this.image.dispose();
-						this.fireEvent('complete');
-					}.bind(this),
-					load: function() {
-						this._resize.bind(this,[true]).delay(10);
-						this.image.setStyle('display','');
-						this.unfade();
-						this.fireEvent('complete');
-					}.bind(this)
-				},
-				styles: {
-					display: 'none'
-				}
-			});
-		}
-		this.fade();
-		this.image.set('src',url).inject(this.messageBox); //for ie
-		return this;
-	},
-	
-	handleRequest: function(url) {
+	loadRequest: function(url) {
 		this.options.request.url = url;
 		var props = $extend({
 			onRequest: function() {
@@ -300,9 +255,22 @@ var LightFace = new Class({
 			}.bind(this)
 		},this.options.request);
 		
-		console.log(props);
-		
 		new Request(props).send();
+		return this;
+	},
+	
+	loadIFrame: function(url) {
+		if(!this.iframe) {
+			this.iframe = new IFrame({
+				styles: {
+					width: '100%',
+					height: '100%'
+				},
+				border: 0
+			}).inject(this.messageBox);
+			this.messageBox.setStyles({ padding:0, overflow:'hidden' });
+		}
+		this.iframe.src = url;
 		return this;
 	},
 	
@@ -346,32 +314,81 @@ var LightFace = new Class({
 		return this;
 	},
 	
-	_calculateHeight: function(suggested) {
-		var height = suggested, threshhold = 110;
+	_calculateProportion: function(dimension,suggested,threshhold) {
 		if(suggested == 'auto') {
 			//get the height of the content box
-			var maxHeight = window.getSize().y - threshhold;
-			if(this.contentBox.getSize().y > maxHeight) {
-				return maxHeight;
-			}
+			var max = window.getSize()[dimension] - threshhold;
+			if(this.contentBox.getSize()[dimension] > max) return max;
 		}
-		return height;
+		return suggested;
 	},
 	
 	_resize: function(constrainImage) {
-		this.messageBox.setStyle('height',this._calculateHeight(this.options.height));
+		this.messageBox.setStyle('height',this._calculateProportion('y',this.options.height,110));
 		if(constrainImage) {
 			//get image dimensions
 			var boxSize = this.messageBox.getSize().y;
 			if(this.image.getSize().y > boxSize) {
-				this.image.setStyle('height',boxSize - 30);
+				this.image.setStyle('height','100%');
+				this.box.set('width',this.image.getSize().x);
 			}
 		}
 		this.position();
 	},
 	
+	/*
+		Expose entire element
+	*/
 	toElement: function () {
 		return this.box;
 	}
 	
 });
+
+
+/* LightFace.Image - used to load images */
+LightFace.Image = new Class({
+	Extends: LightFace,
+	load: function(url,title) {
+		if(!this.image) {
+			this.messageBox.set('html','').setStyles({ padding:0, overflow:'hidden' });
+			this.url = '';
+			this.image = new Element('img',{
+				events: {
+					click: function() {
+						this.hide();
+					}.bind(this),
+					error: function() {
+						this.unfade();
+						this.messageBox.set('html',this.options.errorMessage);
+						this.image.dispose();
+						this.fireEvent('error');
+						delete this.image;
+					}.bind(this),
+					load: function() {
+						this.messageBox.setStyle('width','auto');
+						this._resize.bind(this,[true]).delay(10);
+						this.image.setStyle('display','');
+						this.unfade();
+						this.fireEvent('complete');
+					}.bind(this)
+				},
+				styles: {
+					display: 'block'
+				}
+			});
+		}
+		if(title) this.title.set('html',title);
+		if(url != this.url) {
+			this.fade();
+			this.image.set('src',url).inject(this.messageBox); //for ie
+			this.url = url;
+		}
+		return this;
+	}
+});
+
+
+
+
+

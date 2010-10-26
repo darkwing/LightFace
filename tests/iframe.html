@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Basic LightFace Test</title>
+	<style>
+		@import "../Assets/lightface.css";
+	</style>
+	<link rel="stylesheet" href="../Assets/lightface.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/mootools/1.3.0/mootools.js"></script>
+	<script src="../Source/LightFace.js"></script>
+	<script>
+		window.addEvent('domready',function(){
+			
+			document.id('start').addEvent('click',function() {
+				
+				light = new LightFace({ height:400, width:800 }).loadIFrame('http://google.com').show();
+				
+			});
+			
+		});
+	</script>
+</head>
+<body>
+	
+	<h3>IFrame Demo</h3>
+	<p>
+		Click the button below to launch it and make it happen.
+	</p>
+	
+	<button id="start">IFrame Google</button>
+
+</body>
+</html>

@@ -19,23 +19,23 @@
 				'http://davidwalsh.name/dw-content/slideshow/cricci4.jpg',
 				'http://davidwalsh.name/dw-content/slideshow/cricci5.jpg'
 			];
+			var light = new LightFace.Image({
+				title: 'Image ' + (index + 1),
+				keys: {
+					left: function() {
+						if(index!= 0) this.load(images[--index],'Image ' + (index + 1));
+					},
+					right: function() {
+						if(index != images.length-1) this.load(images[++index],'Image ' + (index + 1));
+					},
+					esc: function() {
+						this.close();
+					}
+				}
+			});
 			
 			document.id('start').addEvent('click',function() {
-				
-				var light = new LightFace({
-					keys: {
-						left: function() {
-							if(index!= 0) this.load(images[--index]);
-						},
-						right: function() {
-							if(index != images.length-1) this.load(images[++index]);
-						},
-						esc: function() {
-							this.close();
-						}
-					}
-				}).load(images[0]).show();
-				
+				load = light.load(images[0],'Image 1').open();
 			});
 			
 		});
