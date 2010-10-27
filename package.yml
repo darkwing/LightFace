@@ -1,7 +1,7 @@
 name:  LightFace
 author:  davidwalsh
-current:  
-category:  
-tags:  []
-docs:  
-demo:  
+current:  0.1
+category:  Interface
+tags:  [lightbox,facebook,overlay]
+docs:  http://davidwalsh.name/js/lightface
+demo:  http://davidwalsh.name/dw-content/lightface.php

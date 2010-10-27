@@ -97,7 +97,7 @@ var LightFace = new Class({
 					this.contentBox = new Element('div',{
 						'class': 'lightfaceContent',
 						styles: {
-							//width: this.options.width
+							width: this.options.width
 						}
 					});
 					cell.setStyle('opacity',1).appendChild(this.contentBox);
@@ -122,8 +122,9 @@ var LightFace = new Class({
 		if(this.options.title) {
 			console.log('title is: ' + this.options.title);
 			this.title = new Element('h2',{
-				'class': 'lightfaceTitle'
-			}).set('html',this.options.title).inject(this.contentBox);
+				'class': 'lightfaceTitle',
+				html: this.options.title
+			}).inject(this.contentBox);
 			if(this.options.draggable && $defined(window['Drag']) && $defined(window['Drag.Move'])) {
 				new Drag.Move(this.box,{ handle: this.title });
 				this.title.addClass('lightfaceDraggable');
@@ -131,9 +132,9 @@ var LightFace = new Class({
 		}
 		
 		//draw message box
-		if(!isNaN(this.options.height)) { this.options.height = this.options.height + 'px'; }
 		this.messageBox = new Element('div',{
 			'class': 'lightfaceMessageBox',
+			html: (this.options.content || ''),
 			styles: {
 				height: this.options.height
 			}

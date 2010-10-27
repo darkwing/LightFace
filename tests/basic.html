@@ -18,15 +18,15 @@
 				],
 				request: { url: 'ajax.php', data: { name: document.id('personName').value || 'PersonWhoIsTooCoolToGiveTheirName' } },
 				title: 'AJAX Demo'
-			}).show();
+			}).open();
 		}
 		
 		
 	 	function formFunction() {
 	 		return new LightFace({
 	 			title: $('demo1title').value,
-	 			message: $('demo1message').value
-	 		}).show();
+	 			content: $('demo1content').value
+	 		}).open();
 	 	}
 
 	 	function termsFunction() {
@@ -49,7 +49,7 @@
 									{ title: 'No', event: function() { confirm.close(); box.unfade(); }, submit: false }
 								]
 			 				});
-			 				confirm.show();
+			 				confirm.open();
 						},
 						submit: true
 					},
@@ -59,7 +59,7 @@
 					}
 				]
 	 		});
-	 		box.show();		
+	 		box.open();		
 	 	}
 
 	 	function imageFunction() {
@@ -68,7 +68,7 @@
 	 			ajaxDelay: 800,
 				cancelValue: ''
 	 		});
-	 		imgBox.show();	
+	 		imgBox.open();	
 	 	}
 	</script>
 </head>
@@ -82,8 +82,8 @@
 			</tr>
 
 			<tr>
-				<td>Message</td>
-				<td><textarea id="demo1message">This is my test message.</textarea></td>
+				<td>content</td>
+				<td><textarea id="demo1content">This is my test content.</textarea></td>
 			</tr>
 			<tr>
 				<td colspan="2" style="text-align: right;">
