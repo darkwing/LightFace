@@ -13,7 +13,7 @@
 			
 			document.id('start').addEvent('click',function() {
 				
-				light = new LightFace({ height:400, width:800 }).loadIFrame('http://google.com').open();
+				light = new LightFace.IFrame({ height:400, width:800, url: 'http://google.com', title: 'Google!' }).addButton('Close', function() { light.close(); },true).open();
 				
 			});
 			

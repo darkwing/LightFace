@@ -9,13 +9,9 @@
 	-----------------------------
 		Change to diff classes:
 			LightFace
-			LightFace.IFrame
 			LightFace.Request
-			LightFace.Image
-		
-		Remove "+px" stuff
-		Better Sizing system
-		More clear show/open/close/hide
+
+		Better Sizing system - add "contrain" option to constrain height and width -- maybe just for images?
 		
 		
 		
@@ -120,7 +116,6 @@ var LightFace = new Class({
 		
 		//draw title
 		if(this.options.title) {
-			console.log('title is: ' + this.options.title);
 			this.title = new Element('h2',{
 				'class': 'lightfaceTitle',
 				html: this.options.title
@@ -169,7 +164,7 @@ var LightFace = new Class({
 				click: clickEvent || this.close.bind(this)
 			}
 		}).inject(this.footer));
-		return this.buttons[title];
+		return this;
 	},
 	showButton: function(title) {
 		if(this.buttons[title]) this.buttons[title].setStyle('display','');
@@ -200,7 +195,7 @@ var LightFace = new Class({
 			this._resize();
 			this.fireEvent('open');
 			this.attachEvents();
-			this.box.setAttribute('tabIndex',0);
+			this.box.setAttribute('tabIndex',0); //accessibility?
 			this.box.focus();
 			this.isOpen = true;
 		}
@@ -257,21 +252,6 @@ var LightFace = new Class({
 		},this.options.request);
 		
 		new Request(props).send();
-		return this;
-	},
-	
-	loadIFrame: function(url) {
-		if(!this.iframe) {
-			this.iframe = new IFrame({
-				styles: {
-					width: '100%',
-					height: '100%'
-				},
-				border: 0
-			}).inject(this.messageBox);
-			this.messageBox.setStyles({ padding:0, overflow:'hidden' });
-		}
-		this.iframe.src = url;
 		return this;
 	},
 	
@@ -347,9 +327,16 @@ var LightFace = new Class({
 });
 
 
-/* LightFace.Image - used to load images */
+/* LightFace.Image - Used to Load Images */
 LightFace.Image = new Class({
+	options: {
+		url: ''
+	},
 	Extends: LightFace,
+	initialize: function(options) {
+		this.parent(options);
+		if(this.options.url) this.load();
+	},
 	load: function(url,title) {
 		if(!this.image) {
 			this.messageBox.set('html','').setStyles({ padding:0, overflow:'hidden' });
@@ -390,6 +377,38 @@ LightFace.Image = new Class({
 });
 
 
-
-
-
+/* LightFace.Image - Used to Load Images */
+LightFace.IFrame = new Class({
+	options: {
+		url: ''
+	},
+	Extends: LightFace,
+	initialize: function(options) {
+		this.parent(options);
+		if(this.options.url) this.load();
+	},
+	load: function(url,title) {
+		this.fade();
+		this.fireEvent('request');
+		if(!this.iframe) {
+			this.messageBox.set('html','');
+			this.iframe = new IFrame({
+				styles: {
+					width: '100%',
+					height: '100%'
+				},
+				events: {
+					load: function() {
+						this.unfade();
+						this.fireEvent('complete');
+					}.bind(this)
+				},
+				border: 0
+			}).inject(this.messageBox);
+			this.messageBox.setStyles({ padding:0, overflow:'hidden' });
+		}
+		if(title) this.title.set('html',title);
+		this.iframe.src = url || this.options.url;
+		return this;
+	}
+});
