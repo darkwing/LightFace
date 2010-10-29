@@ -340,20 +340,21 @@ LightFace.Image = new Class({
 						delete this.image;
 					}.bind(this),
 					load: function() {
-						console.log('load');
 						this.box.setStyle('opacity',1);
 						this.messageBox.setStyle('width','auto');
 						this._resize.bind(this,[true]).delay(10);
-						this.image.setStyle('display','');
+						this.image.setStyle('display','block');
 						this.unfade();
 						this.fireEvent('complete');
 					}.bind(this)
-				},
-				styles: {
-					display: 'block'
 				}
 			});
 		}
+		this.image.setStyles({
+			display: 'none',
+			height: '',
+			width: ''
+		});
 		if(title) this.title.set('html',title);
 		if(url != this.url) {
 			this.fade();
