@@ -29,14 +29,11 @@ var LightFace = new Class({
 		
 		width: 'auto',
 		height: 'auto',
-		draggable: false, 			//wtf?
+		draggable: false,
 		title: '',
 		buttons: [],
 		fadeDelay: 150,
 		fadeDuration: 150,
-		request: {
-			url: false
-		},
 		keys: { 
 			esc: function() { this.close(); } 
 		},
@@ -62,6 +59,7 @@ var LightFace = new Class({
 		this.setOptions(options);
 		this.state = false;
 		this.buttons = {};
+		this.resizeOnOpen = true;
 		this.draw();
 	},
 	
@@ -87,7 +85,7 @@ var LightFace = new Class({
 			for(var y = 0; y < len; y++) {
 				var cssClass = verts[x] + hors[y], cell = row.insertCell(y);
 				cell.className = cssClass;
-				cell.setStyle('opacity',0.4);
+				document.id(cell).setStyle('opacity',0.4);
 				if (cssClass == 'centerCenter') {
 					this.contentBox = new Element('div',{
 						'class': 'lightfaceContent',
@@ -95,7 +93,7 @@ var LightFace = new Class({
 							width: this.options.width
 						}
 					});
-					cell.setStyle('opacity',1).appendChild(this.contentBox);
+					document.id(cell).setStyle('opacity',1).appendChild(this.contentBox);
 				}
 			}
 		}
@@ -192,11 +190,13 @@ var LightFace = new Class({
 	open: function(fast) {
 		if(!this.isOpen) {
 			this.box[fast ? 'setStyle' : 'tween']('opacity',1);
-			this._resize();
+			if(this.resizeOnOpen) this._resize();
 			this.fireEvent('open');
 			this.attachEvents();
 			this.box.setAttribute('tabIndex',0); //accessibility?
-			this.box.focus();
+			(function() {
+				this.box.focus();
+			}).bind(this).delay(100);
 			this.isOpen = true;
 		}
 		return this;
@@ -235,15 +235,11 @@ var LightFace = new Class({
 	attachEvents: function() {
 		
 		this.keyEvent = function(e){
-			if(this.options.keys[e.key]) {
-				this.options.keys[e.key].call(this);
-			}
+			if(this.options.keys[e.key]) this.options.keys[e.key].call(this);
 		}.bind(this);
 		document.addEvent('keyup',this.keyEvent);
 		
-		this.resizeEvents = function() {
-			this._resize();
-		}.bind(this);
+		this.resizeEvents = function() { this._resize(); }.bind(this);
 		window.addEvent('resize',this.resizeEvents);
 		
 		return this;
@@ -269,17 +265,14 @@ var LightFace = new Class({
 		return this;
 	},
 	
-	_calculateProportion: function(dimension,suggested,threshhold) {
-		if(suggested == 'auto') {
-			//get the height of the content box
-			var max = window.getSize()[dimension] - threshhold;
-			if(this.contentBox.getSize()[dimension] > max) return max;
-		}
-		return suggested;
-	},
-	
 	_resize: function() {
-		this.messageBox.setStyle('height',this._calculateProportion('y',this.options.height,110));
+		var height = this.options.height;
+		if(height == 'auto') {
+			//get the height of the content box
+			var max = window.getSize().y - 110;
+			if(this.contentBox.getSize().y > max) height = max;
+		}
+		this.messageBox.setStyle('height',height);
 		this.position();
 	},
 	
@@ -302,26 +295,15 @@ LightFace.Image = new Class({
 	initialize: function(options) {
 		this.parent(options);
 		this.url = '';
+		this.resizeOnOpen = false;
 		if(this.options.url) this.load();
-	},
-	open: function(fast) {
-		if(!this.isOpen) {
-			this.box[fast ? 'setStyle' : 'tween']('opacity',1);
-			this.fireEvent('open');
-			this.attachEvents();
-			this.box.setAttribute('tabIndex',0); //accessibility?
-			this.box.focus();
-			this.isOpen = true;
-		}
-		return this;
 	},
 	_resize: function() {
 		//get the largest possible height
 		var maxHeight = window.getSize()['y'] - 110;
 		
 		//get the image size
-		var imageDimensions = this.image.retrieve('dimensions');
-		console.log('dims',imageDimensions);
+		var imageDimensions = document.id(this.image).retrieve('dimensions');
 		
 		//if image is taller than window...
 		if(imageDimensions.y > maxHeight) {
@@ -413,7 +395,10 @@ LightFace.IFrame = new Class({
 /* LightFace.Request */
 LightFace.Request = new Class({
 	options: {
-		url: ''
+		url: '',
+		request: {
+			url: false
+		}
 	},
 	Extends: LightFace,
 	initialize: function(options) {
@@ -429,7 +414,6 @@ LightFace.Request = new Class({
 			onRequest: function() {
 				this.fade();
 				this.fireEvent('request');
-				console.log('request');
 			}.bind(this),
 			onSuccess: function(response) {
 				this.messageBox.set('html',response);
