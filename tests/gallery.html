@@ -19,8 +19,9 @@
 				'http://davidwalsh.name/dw-content/slideshow/cricci4.jpg',
 				'http://davidwalsh.name/dw-content/slideshow/cricci5.jpg'
 			];
-			var light = new LightFace.Image({
+			light = new LightFace.Image({
 				title: 'Image ' + (index + 1),
+				fadeDuration: 100,
 				keys: {
 					left: function() {
 						if(index!= 0) this.load(images[--index],'Image ' + (index + 1));

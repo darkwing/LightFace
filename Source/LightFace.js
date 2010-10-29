@@ -7,17 +7,25 @@
 	
 	To Do
 	-----------------------------
-		Change to diff classes:
-			LightFace
-			LightFace.Request
-
+		
 		Better Sizing system - add "contrain" option to constrain height and width -- maybe just for images?
+			
+			0.  User clicks on image
+			1.  Lightbox opens, sets a min-height and min-width, shows indicator
+			2.  Request image
+			3.  Upon image load:
+				i.  Calculate "natural" height/width
+				ii.  Based on box size, resize/scale image and box
+				
 		
 		
 		
 	Possible Enhancements
 	-----------------------------
-		IE6 - Overlay Size
+		-  IE6 - Overlay Size
+		-  DIV layout
+		-  Event Delegation:  listen to links clicks inside lightbox;  ajax-load them
+		
 		
 */
 
@@ -35,7 +43,7 @@ var LightFace = new Class({
 		title: '',
 		buttons: [],
 		fadeDelay: 150,
-		fadeDuration: 500,
+		fadeDuration: 150,
 		request: {
 			url: false
 		},
@@ -45,6 +53,7 @@ var LightFace = new Class({
 		content: '<p>Message not specified.</p>',
 		method: 'get',
 		zIndex: 9001,
+		overlayTitle: false,
 		errorMessage: '<p>The requested file could not be found.</p>'/*,
 		onShow: $empty,
 		onHide: $empty,
@@ -101,19 +110,6 @@ var LightFace = new Class({
 			}
 		}
 		
-		//draw overlay
-		this.overlay = new Element('div',{
-			html: '&nbsp;',
-			styles: {
-				opacity: 0
-			},
-			'class': 'lightfaceOverlay',
-			tween: {
-				link: 'chain',
-				duration: this.options.fadeDuration
-			}
-		}).inject(this.contentBox);
-		
 		//draw title
 		if(this.options.title) {
 			this.title = new Element('h2',{
@@ -134,6 +130,20 @@ var LightFace = new Class({
 				height: this.options.height
 			}
 		}).inject(this.contentBox);
+		
+		//draw overlay
+		this.overlay = new Element('div',{
+			html: '&nbsp;',
+			styles: {
+				opacity: 0
+			},
+			'class': 'lightfaceOverlay',
+			tween: {
+				link: 'chain',
+				duration: this.options.fadeDuration
+			}
+		}).inject(this.contentBox);
+		if(!this.options.overlayTitle) this.overlay.setStyle('top',this.title.getSize().y);
 		
 		//button container
 		this.footer = new Element('div',{
@@ -161,7 +171,7 @@ var LightFace = new Class({
 			value: title,
 			'class': isSubmit ? 'lightfaceSubmit': '',
 			events: {
-				click: clickEvent || this.close.bind(this)
+				click: (clickEvent || this.close).bind(this)
 			}
 		}).inject(this.footer));
 		return this;
@@ -229,32 +239,6 @@ var LightFace = new Class({
 		return this;
 	},
 	
-	loadRequest: function(url) {
-		this.options.request.url = url;
-		var props = $extend({
-			onRequest: function() {
-				this.fade();
-				this.fireEvent('request');
-			}.bind(this),
-			onSuccess: function(response) {
-				this.messageBox.set('html',response);
-				this.fireEvent('success');
-			}.bind(this),
-			onFailure: function() {
-				this.messageBox.set('html',this.options.errorMessage);
-				this.fireEvent('failure');
-			}.bind(this),
-			onComplete: function() {
-				this._resize();
-				this.unfade();
-				this.fireEvent('complete');
-			}.bind(this)
-		},this.options.request);
-		
-		new Request(props).send();
-		return this;
-	},
-	
 	/*
 		Keyboard and Window events
 	*/
@@ -311,7 +295,7 @@ var LightFace = new Class({
 			var boxSize = this.messageBox.getSize().y;
 			if(this.image.getSize().y > boxSize) {
 				this.image.setStyle('height','100%');
-				this.box.set('width',this.image.getSize().x);
+				this.box.setStyle('width',this.image.getSize().x);
 			}
 		}
 		this.position();
@@ -335,17 +319,19 @@ LightFace.Image = new Class({
 	Extends: LightFace,
 	initialize: function(options) {
 		this.parent(options);
+		this.messageBox.set('html','').setStyles({ 
+			padding:0, 
+			overflow:'hidden',
+			width: 200,
+			height:200
+		});
+		this.url = '';
 		if(this.options.url) this.load();
 	},
 	load: function(url,title) {
 		if(!this.image) {
-			this.messageBox.set('html','').setStyles({ padding:0, overflow:'hidden' });
-			this.url = '';
 			this.image = new Element('img',{
 				events: {
-					click: function() {
-						this.hide();
-					}.bind(this),
 					error: function() {
 						this.unfade();
 						this.messageBox.set('html',this.options.errorMessage);
@@ -354,6 +340,8 @@ LightFace.Image = new Class({
 						delete this.image;
 					}.bind(this),
 					load: function() {
+						console.log('load');
+						this.box.setStyle('opacity',1);
 						this.messageBox.setStyle('width','auto');
 						this._resize.bind(this,[true]).delay(10);
 						this.image.setStyle('display','');
@@ -409,6 +397,49 @@ LightFace.IFrame = new Class({
 		}
 		if(title) this.title.set('html',title);
 		this.iframe.src = url || this.options.url;
+		return this;
+	}
+});
+
+/* LightFace.Request */
+LightFace.Request = new Class({
+	options: {
+		url: ''
+	},
+	Extends: LightFace,
+	initialize: function(options) {
+		this.parent(options);
+		if(this.options.url) this.load();
+	},
+	load: function(url,title) {
+		
+		if(title) this.title.set('html',title);
+		if(url) this.options.url = url;
+		
+		var props = $extend({
+			onRequest: function() {
+				this.fade();
+				this.fireEvent('request');
+				console.log('request');
+			}.bind(this),
+			onSuccess: function(response) {
+				this.messageBox.set('html',response);
+				this.fireEvent('success');
+			}.bind(this),
+			onFailure: function() {
+				this.messageBox.set('html',this.options.errorMessage);
+				this.fireEvent('failure');
+			}.bind(this),
+			onComplete: function() {
+				this._resize();
+				this.unfade();
+				this.fireEvent('complete');
+			}.bind(this)
+		},this.options.request);
+		
+		if(!props.url) { props.url = url || this.options.url; } //HACK!!! For some reason, props.url was "false"
+		
+		new Request(props).send();
 		return this;
 	}
 });

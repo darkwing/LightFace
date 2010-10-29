@@ -3,7 +3,7 @@
 	margin: 0px;
 	padding: 0px;
 	border-collapse: collapse;
-	background:#fff;
+	/* background:#fff; */
 }
 
 .lightface td {
@@ -124,7 +124,6 @@
 	left: 0;
 	top: 0;
 	bottom: 0;
-	left: 0;
 	right: 0;
 	background-image: url(fbloader.gif);
 	background-position: center center;

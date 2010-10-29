@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Request LightFace Test</title>
+	<style>
+		@import "../Assets/lightface.css";
+	</style>
+	<link rel="stylesheet" href="../Assets/lightface.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/mootools/1.3.0/mootools.js"></script>
+	<script src="../Source/LightFace.js"></script>
+	<script>
+		window.addEvent('domready',function(){
+			
+			document.id('sub').addEvent('click',function(){
+				
+				ajaxFace = new LightFace.Request({
+					url: 'ajax.php',
+					buttons: [
+						{ title: 'Submitter', event: function() { alert('hi!'); }, submit: true },
+						{ title: 'Canceler', event: function() { this.close(); }, submit: false }
+					],
+					request: { data: { name: document.id('personName').value || 'PersonWhoIsTooCoolToGiveTheirName' } },
+					title: 'AJAX Demo'
+				}).open();
+				
+			});
+			
+		});
+	</script>
+</head>
+<body>
+	
+	<h3>AJAX Test</h3>
+	<p>Your name:  <input type="text" id="personName" class="input box" /> <input type="button" value="Submit!" id="sub" class="submit" /></p>
+
+</body>
+</html>
