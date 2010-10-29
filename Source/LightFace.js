@@ -7,23 +7,13 @@
 	
 	To Do
 	-----------------------------
-		
-		Better Sizing system - add "contrain" option to constrain height and width -- maybe just for images?
-			
-			0.  User clicks on image
-			1.  Lightbox opens, sets a min-height and min-width, shows indicator
-			2.  Request image
-			3.  Upon image load:
-				i.  Calculate "natural" height/width
-				ii.  Based on box size, resize/scale image and box
-				
+		- Browser Checks
 		
 		
 		
 	Possible Enhancements
 	-----------------------------
 		-  IE6 - Overlay Size
-		-  DIV layout
 		-  Event Delegation:  listen to links clicks inside lightbox;  ajax-load them
 		
 		
@@ -288,16 +278,8 @@ var LightFace = new Class({
 		return suggested;
 	},
 	
-	_resize: function(constrainImage) {
+	_resize: function() {
 		this.messageBox.setStyle('height',this._calculateProportion('y',this.options.height,110));
-		if(constrainImage) {
-			//get image dimensions
-			var boxSize = this.messageBox.getSize().y;
-			if(this.image.getSize().y > boxSize) {
-				this.image.setStyle('height','100%');
-				this.box.setStyle('width',this.image.getSize().x);
-			}
-		}
 		this.position();
 	},
 	
@@ -319,48 +301,74 @@ LightFace.Image = new Class({
 	Extends: LightFace,
 	initialize: function(options) {
 		this.parent(options);
-		this.messageBox.set('html','').setStyles({ 
-			padding:0, 
-			overflow:'hidden',
-			width: 200,
-			height:200
-		});
 		this.url = '';
 		if(this.options.url) this.load();
 	},
+	open: function(fast) {
+		if(!this.isOpen) {
+			this.box[fast ? 'setStyle' : 'tween']('opacity',1);
+			this.fireEvent('open');
+			this.attachEvents();
+			this.box.setAttribute('tabIndex',0); //accessibility?
+			this.box.focus();
+			this.isOpen = true;
+		}
+		return this;
+	},
+	_resize: function() {
+		//get the largest possible height
+		var maxHeight = window.getSize()['y'] - 110;
+		
+		//get the image size
+		var imageDimensions = this.image.retrieve('dimensions');
+		console.log('dims',imageDimensions);
+		
+		//if image is taller than window...
+		if(imageDimensions.y > maxHeight) {
+			this.image.height = maxHeight;
+			this.image.width = (imageDimensions.x * (maxHeight / imageDimensions.y));
+		}
+		
+		//get rid of styles
+		this.messageBox.setStyles({ height: '', width: '' });
+		
+		//position the box
+		this.position();
+	},
 	load: function(url,title) {
-		if(!this.image) {
-			this.image = new Element('img',{
-				events: {
-					error: function() {
-						this.unfade();
-						this.messageBox.set('html',this.options.errorMessage);
-						this.image.dispose();
-						this.fireEvent('error');
-						delete this.image;
-					}.bind(this),
-					load: function() {
-						this.box.setStyle('opacity',1);
-						this.messageBox.setStyle('width','auto');
-						this._resize.bind(this,[true]).delay(10);
-						this.image.setStyle('display','block');
+		//keep current height/width
+		var currentDimensions = { x: '', y: '' };
+		if(this.image) currentDimensions = this.image.getSize();
+		///empty the content, show the indicator
+		this.messageBox.set('html','').setStyles({
+			padding:0,
+			overflow:'hidden',
+			width: currentDimensions.x,
+			height: currentDimensions.y
+		});
+		this.position();
+		this.fade();
+		this.image = new Element('img',{
+			events: {
+				load: function() {
+					(function() {
+						this.image.inject(this.messageBox);
+						this.image.store('dimensions',this.image.getSize());
+						this._resize();
 						this.unfade();
 						this.fireEvent('complete');
-					}.bind(this)
+					}).bind(this).delay(10);
+				}.bind(this),
+				error: function() {
+					
 				}
-			});
-		}
-		this.image.setStyles({
-			display: 'none',
-			height: '',
-			width: ''
+			},
+			styles: {
+				display: 'block'
+			}
 		});
+		this.image.src = url || this.options.url;
 		if(title) this.title.set('html',title);
-		if(url != this.url) {
-			this.fade();
-			this.image.set('src',url).inject(this.messageBox); //for ie
-			this.url = url;
-		}
 		return this;
 	}
 });
