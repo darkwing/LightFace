@@ -40,8 +40,7 @@ var LightFace = new Class({
 		overlayTitle: false,
 		constrain: false,
 		errorMessage: '<p>The requested file could not be found.</p>'/*,
-		onShow: $empty,
-		onHide: $empty,
+		onOpen: $empty,
 		onClose: $empty,
 		onFade: $empty,
 		onUnfade: $empty,
@@ -128,7 +127,7 @@ var LightFace = new Class({
 				duration: this.options.fadeDuration
 			}
 		}).inject(this.contentBox);
-		if(!this.options.overlayTitle) this.overlay.setStyle('top',this.title.getSize().y);
+		if(!this.options.overlayTitle && this.title) this.overlay.setStyle('top',this.title.getSize().y);
 		
 		//button container
 		this.footer = new Element('div',{
@@ -173,7 +172,6 @@ var LightFace = new Class({
 	/*
 		SHOWING, HIDING, FADING
 	*/
-	
 	close: function(fast) {
 		if(this.isOpen) {
 			this.box[fast ? 'setStyle' : 'tween']('opacity',0);
@@ -187,13 +185,15 @@ var LightFace = new Class({
 	open: function(fast) {
 		if(!this.isOpen) {
 			this.box[fast ? 'setStyle' : 'tween']('opacity',1);
-			if(this.resizeOnOpen) this._resize();
+			if(this.resizeOnOpen) {
+				this._resize();
+			}
 			this.fireEvent('open');
 			this._attachEvents();
 			this.box.setAttribute('tabIndex',0); //accessibility?
 			(function() {
 				this.box.focus();
-			}).bind(this).delay(100);
+			}).bind(this).delay(this.options.fadeDuration);
 			this.isOpen = true;
 		}
 		return this;
@@ -221,7 +221,7 @@ var LightFace = new Class({
 	*/
 	load: function(content,title) {
 		if(content) this.messageBox.set('html',content);
-		if(title) this.title.set('html',title);
+		if(title && this.title) this.title.set('html',title);
 		this.fireEvent('complete');
 		return this;
 	},
@@ -230,21 +230,19 @@ var LightFace = new Class({
 		Keyboard and Window events
 	*/
 	_attachEvents: function() {
-		
 		this.keyEvent = function(e){
 			if(this.options.keys[e.key]) this.options.keys[e.key].call(this);
 		}.bind(this);
-		document.addEvent('keyup',this.keyEvent);
+		this.box.addEvent('keypress',this.keyEvent);
 		
-		console.log(this.options);
-		this.resizeEvent = this.options.constrain ? function() { console.log('window resize'); this._resize(); }.bind(this) : function() { this._position(); console.log('no constrain'); }.bind(this);
+		this.resizeEvent = this.options.constrain ? function(e) { this._resize(); }.bind(this) : function() { this._position(); }.bind(this);
 		window.addEvent('resize',this.resizeEvent);
 		
 		return this;
 	},
 	
 	_detachEvents: function() {
-		document.removeEvent('keyup',this.keyEvent);
+		this.box.removeEvent('keypress',this.keyEvent);
 		window.removeEvent('resize',this.resizeEvent);
 		return this;
 	},

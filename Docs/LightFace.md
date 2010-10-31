@@ -165,7 +165,11 @@ Open the modal dialog.
 
 ### Syntax:
 
-	modal.open();
+	modal.open(fast);
+	
+### Arguments:
+
+1. fast - (*boolean*)  If true, skips fading and quickly sets opacity to 100%.
 
 LightFace Method: close {#LightFace:close}
 ---------------------------------------------------------------
@@ -174,7 +178,11 @@ Closes the modal dialog.
 
 ### Syntax:
 
-	modal.close();
+	modal.close(fast);
+	
+### Arguments:
+
+1. fast - (*boolean*)  If true, skips fading and quickly sets opacity to 0%.
 	
 LightFace Method: fade {#LightFace:fade}
 ---------------------------------------------------------------
@@ -305,18 +313,18 @@ Loads an image into the modal box's content area.
 2. title - (*string*)  The title of the modal dialog. (not required)
 
 
-Class: LightFace.Request {#LightFace.Request}
+Class: LightFace.Static {#LightFace.Static}
 =====================================
 
-LightFace extension specially built to load content via AJAX.
+LightFace extension specially built to stay in a static position.  You must provide X and Y coordinates for where the modal should display.
 
 
-LightFace.Request Method: constructor {#LightFace.Request:constructor}
+LightFace.Static Method: constructor {#LightFace.Static:constructor}
 ---------------------------------------------------------------
 
 ### Syntax:
 
-	var modal = new LightFace.Request(options);
+	var modal = new LightFace.Static(options);
 
 ### Arguments:
 
@@ -324,22 +332,21 @@ LightFace.Request Method: constructor {#LightFace.Request:constructor}
 
 ### Options:
 
-LightFace.Request uses all of the base LightFace options.  In addition to those:
+LightFace.Static uses all of the base LightFace options.  In addition to those:
 
-* url - (*string*, defaults to '')  The URL that should be loaded via AJAX.
-* request (*object*, defaults to {})  Any special instructions for the AJAX request (passed directly to the Request object)
+* offsets - (*object*, defaults to { x:16, y:16 })  Offsets from the position passed in.
 
 
-LightFace.Request Method: load {#LightFace.Request:load}
+LightFace.Static Method: open {#LightFace.Static:open}
 ---------------------------------------------------------------
 
-Loads an image into the modal box's content area.
+Opens the modal at give x and y coordinates
 
 ### Syntax:
 
-	modal.load('http://davidwalsh.name/contact','Contact The David Walsh Blog');
+	modal.open(200,100);
 
 ### Arguments:
 
-1. URL - (*string*)  The URL of the AJAX request.
-2. title - (*string*)  The title of the modal dialog. (not required)
+1. x - (*integer*)  The x coordinate to place the modal at.
+2. y - (*integer*)  The y coordinate to place the modal at.

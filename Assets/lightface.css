@@ -3,7 +3,9 @@
 	margin: 0px;
 	padding: 0px;
 	border-collapse: collapse;
-	position: absolute
+	position: absolute;
+	top: -9000px;
+	left: -9000px;
 }
 
 .lightface td {

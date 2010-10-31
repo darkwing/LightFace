@@ -21,13 +21,13 @@ provides:
 */
 /* LightFace.Request */
 LightFace.Request = new Class({
+	Extends: LightFace,
 	options: {
 		url: '',
 		request: {
 			url: false
 		}
 	},
-	Extends: LightFace,
 	initialize: function(options) {
 		this.parent(options);
 		if(this.options.url) this.load();
@@ -53,7 +53,7 @@ LightFace.Request = new Class({
 			}.bind(this)
 		},this.options.request);
 		
-		if(title) this.title.set('html',title);
+		if(title && this.title) this.title.set('html',title);
 		if(!props.url) props.url = url || this.options.url;
 		
 		new Request(props).send();

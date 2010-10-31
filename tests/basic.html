@@ -11,6 +11,7 @@
 	<script src="../Source/LightFace.IFrame.js"></script>
 	<script src="../Source/LightFace.Image.js"></script>
 	<script src="../Source/LightFace.Request.js"></script>
+	<script src="../Source/LightFace.Static.js"></script>
 	<script>
 		
 	 	function formFunction() {
@@ -52,30 +53,52 @@
 	 		});
 	 		box.open();		
 	 	}
+		
+		window.addEvent('domready',function() {
+			var contextFace = new LightFace.Static({
+				title: 'Context',
+				content: 'Hello!',
+				width: 80,
+				height: 100
+			});
+			document.id('context-link').addEvent('click',function(e){
+				if(e) e.stop();
+				contextFace.open(false,e.page.x,e.page.y);
+			});
+		});
+		
+		
+		
 	</script>
 </head>
 <body>
 	
 	<h3>Simple demo</h3>
-		<table class="formtable">
-			<tr>
-				<td>Title</td>
-				<td><input type="text" id="demo1title" value="Test" /></td>
-			</tr>
+	
+	<table class="formtable">
+		<tr>
+			<td>Title</td>
+			<td><input type="text" id="demo1title" value="Test" /></td>
+		</tr>
 
-			<tr>
-				<td>content</td>
-				<td><textarea id="demo1content">This is my test content.</textarea></td>
-			</tr>
-			<tr>
-				<td colspan="2" style="text-align: right;">
-					<input type="button" value="Display" onclick="javascript: formFunction();" class="submit" />			
-				</td>
-			</tr>
-		</table>
-		<h3>Terms and conditions demo</h3>
-		<p>Do you agree to our <a href="javascript: termsFunction();">terms and conditions</a>?</p>
-		
+		<tr>
+			<td>content</td>
+			<td><textarea id="demo1content">This is my test content.</textarea></td>
+		</tr>
+		<tr>
+			<td colspan="2" style="text-align: right;">
+				<input type="button" value="Display" onclick="javascript: formFunction();" class="submit" />			
+			</td>
+		</tr>
+	</table><br />
+	
+	<h3>Terms and conditions demo</h3>
+	<p>Do you agree to our <a href="javascript: termsFunction();">terms and conditions</a>?</p><br />
+	
+	<h3>Right-Click Demo</h3>
+	<p>Right click <a href="" id="context-link">this link</a> to set the dialog here.</p>
+	
+	<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
 	
 </body>
 </html>

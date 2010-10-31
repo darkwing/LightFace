@@ -21,11 +21,11 @@ provides:
 */
 /* LightFace.Image - Used to Load Images */
 LightFace.Image = new Class({
+	Extends: LightFace,
 	options: {
 		constrain: true,
 		url: ''
 	},
-	Extends: LightFace,
 	initialize: function(options) {
 		this.parent(options);
 		this.url = '';
@@ -81,7 +81,7 @@ LightFace.Image = new Class({
 			}
 		});
 		this.image.src = url || this.options.url;
-		if(title) this.title.set('html',title);
+		if(title && this.title) this.title.set('html',title);
 		return this;
 	}
 });

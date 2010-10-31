@@ -21,10 +21,10 @@ provides:
 */
 /* LightFace.IFrame - Use to work well with IFrames */
 LightFace.IFrame = new Class({
+	Extends: LightFace,
 	options: {
 		url: ''
 	},
-	Extends: LightFace,
 	initialize: function(options) {
 		this.parent(options);
 		if(this.options.url) this.load();
