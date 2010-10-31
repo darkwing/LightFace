@@ -38,6 +38,7 @@ var LightFace = new Class({
 		zIndex: 9001,
 		pad: 100,
 		overlayTitle: false,
+		constrain: false,
 		errorMessage: '<p>The requested file could not be found.</p>'/*,
 		onShow: $empty,
 		onHide: $empty,
