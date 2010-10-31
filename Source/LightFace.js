@@ -2,31 +2,28 @@
 	Inspired by Bert Ramaker's Facebox for jQuery and MooTools:  http://bertramakers.com/labs/
 	Rewritten and optimized by David Walsh:  http://davidwalsh.name
 */
-
 /*
-	
-	To Do
-	-----------------------------
-		- Browser Checks
-		
-		
-		
-	Possible Enhancements
-	-----------------------------
-		-  IE6 - Overlay Size
-		-  Event Delegation:  listen to links clicks inside lightbox;  ajax-load them
-		
-		
+---
+description:     LightFace
+
+authors:
+  - David Walsh (http://davidwalsh.name)
+
+license:
+  - MIT-style license
+
+requires:
+  core/1.2.1:   '*'
+
+provides:
+  - LightFace
+...
 */
-
-
-
 var LightFace = new Class({
 	
 	Implements: [Options,Events],
 	
 	options: {
-		
 		width: 'auto',
 		height: 'auto',
 		draggable: false,
@@ -38,8 +35,8 @@ var LightFace = new Class({
 			esc: function() { this.close(); } 
 		},
 		content: '<p>Message not specified.</p>',
-		method: 'get',
 		zIndex: 9001,
+		pad: 100,
 		overlayTitle: false,
 		errorMessage: '<p>The requested file could not be found.</p>'/*,
 		onShow: $empty,
@@ -69,7 +66,6 @@ var LightFace = new Class({
 		this.box = new Element('table',{
 			'class': 'lightface',
 			styles: {
-				 position: 'absolute',
 				'z-index': this.options.zIndex,
 				opacity: 0
 			},
@@ -165,11 +161,11 @@ var LightFace = new Class({
 		return this;
 	},
 	showButton: function(title) {
-		if(this.buttons[title]) this.buttons[title].setStyle('display','');
+		if(this.buttons[title]) this.buttons[title].removeClass('hiddenButton');
 		return this.buttons[title];
 	},
 	hideButton: function(title) {
-		if(this.buttons[title]) this.buttons[title].setStyle('display','none');
+		if(this.buttons[title]) this.buttons[title].addClass('hiddenButton');
 		return this.buttons[title];
 	},
 	
@@ -181,7 +177,7 @@ var LightFace = new Class({
 		if(this.isOpen) {
 			this.box[fast ? 'setStyle' : 'tween']('opacity',0);
 			this.fireEvent('close');
-			this.detachEvents();
+			this._detachEvents();
 			this.isOpen = false;
 		}
 		return this;
@@ -192,7 +188,7 @@ var LightFace = new Class({
 			this.box[fast ? 'setStyle' : 'tween']('opacity',1);
 			if(this.resizeOnOpen) this._resize();
 			this.fireEvent('open');
-			this.attachEvents();
+			this._attachEvents();
 			this.box.setAttribute('tabIndex',0); //accessibility?
 			(function() {
 				this.box.focus();
@@ -223,7 +219,7 @@ var LightFace = new Class({
 		LOADING AND SETTING OF CONTENT
 	*/
 	load: function(content,title) {
-		this.messageBox.set('html',content);
+		if(content) this.messageBox.set('html',content);
 		if(title) this.title.set('html',title);
 		this.fireEvent('complete');
 		return this;
@@ -232,29 +228,30 @@ var LightFace = new Class({
 	/*
 		Keyboard and Window events
 	*/
-	attachEvents: function() {
+	_attachEvents: function() {
 		
 		this.keyEvent = function(e){
 			if(this.options.keys[e.key]) this.options.keys[e.key].call(this);
 		}.bind(this);
 		document.addEvent('keyup',this.keyEvent);
 		
-		this.resizeEvents = function() { this._resize(); }.bind(this);
-		window.addEvent('resize',this.resizeEvents);
+		console.log(this.options);
+		this.resizeEvent = this.options.constrain ? function() { console.log('window resize'); this._resize(); }.bind(this) : function() { this._position(); console.log('no constrain'); }.bind(this);
+		window.addEvent('resize',this.resizeEvent);
 		
 		return this;
 	},
 	
-	detachEvents: function() {
+	_detachEvents: function() {
 		document.removeEvent('keyup',this.keyEvent);
-		document.removeEvent('resize',this.resizeEvents);
+		window.removeEvent('resize',this.resizeEvent);
 		return this;
 	},
 	
 	/*
 		Resizing, poisitioning
 	*/
-	position: function() {
+	_position: function() {
 		var windowSize = window.getSize(), 
 			scrollSize = window.getScroll(), 
 			boxSize = this.box.getSize();
@@ -269,170 +266,25 @@ var LightFace = new Class({
 		var height = this.options.height;
 		if(height == 'auto') {
 			//get the height of the content box
-			var max = window.getSize().y - 110;
+			var max = window.getSize().y - this.options.pad;
 			if(this.contentBox.getSize().y > max) height = max;
 		}
 		this.messageBox.setStyle('height',height);
-		this.position();
+		this._position();
 	},
 	
 	/*
 		Expose entire element
 	*/
 	toElement: function () {
-		return this.box;
-	}
+		return this.messageBox;
+	},
 	
-});
-
-
-/* LightFace.Image - Used to Load Images */
-LightFace.Image = new Class({
-	options: {
-		url: ''
-	},
-	Extends: LightFace,
-	initialize: function(options) {
-		this.parent(options);
-		this.url = '';
-		this.resizeOnOpen = false;
-		if(this.options.url) this.load();
-	},
-	_resize: function() {
-		//get the largest possible height
-		var maxHeight = window.getSize()['y'] - 110;
-		
-		//get the image size
-		var imageDimensions = document.id(this.image).retrieve('dimensions');
-		
-		//if image is taller than window...
-		if(imageDimensions.y > maxHeight) {
-			this.image.height = maxHeight;
-			this.image.width = (imageDimensions.x * (maxHeight / imageDimensions.y));
-		}
-		
-		//get rid of styles
-		this.messageBox.setStyles({ height: '', width: '' });
-		
-		//position the box
-		this.position();
-	},
-	load: function(url,title) {
-		//keep current height/width
-		var currentDimensions = { x: '', y: '' };
-		if(this.image) currentDimensions = this.image.getSize();
-		///empty the content, show the indicator
-		this.messageBox.set('html','').setStyles({
-			padding:0,
-			overflow:'hidden',
-			width: currentDimensions.x,
-			height: currentDimensions.y
-		});
-		this.position();
-		this.fade();
-		this.image = new Element('img',{
-			events: {
-				load: function() {
-					(function() {
-						this.image.inject(this.messageBox);
-						this.image.store('dimensions',this.image.getSize());
-						this._resize();
-						this.unfade();
-						this.fireEvent('complete');
-					}).bind(this).delay(10);
-				}.bind(this),
-				error: function() {
-					
-				}
-			},
-			styles: {
-				display: 'block'
-			}
-		});
-		this.image.src = url || this.options.url;
-		if(title) this.title.set('html',title);
-		return this;
-	}
-});
-
-
-/* LightFace.Image - Used to Load Images */
-LightFace.IFrame = new Class({
-	options: {
-		url: ''
-	},
-	Extends: LightFace,
-	initialize: function(options) {
-		this.parent(options);
-		if(this.options.url) this.load();
-	},
-	load: function(url,title) {
-		this.fade();
-		this.fireEvent('request');
-		if(!this.iframe) {
-			this.messageBox.set('html','');
-			this.iframe = new IFrame({
-				styles: {
-					width: '100%',
-					height: '100%'
-				},
-				events: {
-					load: function() {
-						this.unfade();
-						this.fireEvent('complete');
-					}.bind(this)
-				},
-				border: 0
-			}).inject(this.messageBox);
-			this.messageBox.setStyles({ padding:0, overflow:'hidden' });
-		}
-		if(title) this.title.set('html',title);
-		this.iframe.src = url || this.options.url;
-		return this;
-	}
-});
-
-/* LightFace.Request */
-LightFace.Request = new Class({
-	options: {
-		url: '',
-		request: {
-			url: false
-		}
-	},
-	Extends: LightFace,
-	initialize: function(options) {
-		this.parent(options);
-		if(this.options.url) this.load();
-	},
-	load: function(url,title) {
-		
-		if(title) this.title.set('html',title);
-		if(url) this.options.url = url;
-		
-		var props = $extend({
-			onRequest: function() {
-				this.fade();
-				this.fireEvent('request');
-			}.bind(this),
-			onSuccess: function(response) {
-				this.messageBox.set('html',response);
-				this.fireEvent('success');
-			}.bind(this),
-			onFailure: function() {
-				this.messageBox.set('html',this.options.errorMessage);
-				this.fireEvent('failure');
-			}.bind(this),
-			onComplete: function() {
-				this._resize();
-				this.unfade();
-				this.fireEvent('complete');
-			}.bind(this)
-		},this.options.request);
-		
-		if(!props.url) { props.url = url || this.options.url; } //HACK!!! For some reason, props.url was "false"
-		
-		new Request(props).send();
-		return this;
+	/*
+		Cleanup
+	*/
+	destroy: function() {
+		this._detachEvents();
+		this.box.dispose();
 	}
 });

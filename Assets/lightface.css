@@ -3,7 +3,7 @@
 	margin: 0px;
 	padding: 0px;
 	border-collapse: collapse;
-	/* background:#fff; */
+	position: absolute
 }
 
 .lightface td {
@@ -99,7 +99,7 @@
 	text-align: right;
 }
 
-.lightfaceFooter input[type="button"] {
+.lightface .lightfaceFooter input[type="button"] {
 	border: 1px solid #666;
 	border-top-color: #e7e7e7;
 	border-left-color: #e7e7e7;
@@ -111,7 +111,7 @@
 	cursor:pointer;
 }
 
-.lightfaceFooter input[type="button"].lightfaceSubmit {
+.lightface .lightfaceFooter input[type="button"].lightfaceSubmit {
 	border-color: #0e1f5b;
 	border-top-color: #d9dfea;
 	border-left-color: #d9dfea;
@@ -119,7 +119,11 @@
 	color: #fff;
 }
 
-.lightfaceOverlay {
+.lightface .hiddenButton {
+	visibility: hidden;
+}
+
+.lightface .lightfaceOverlay {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -131,8 +135,17 @@
 	background-color: #fff;
 }
 
-.lightfaceMessageBox	{ 
+.lightface .lightfaceMessageBox	{ 
 	overflow: auto;
 	padding: 10px 10px;
 	min-height: 50px
+}
+
+.lightface .lightFaceMessageBoxImage {
+	overflow: hidden;
+	padding: 0;
+}
+
+.lightface .lightFaceMessageBoxImage img {
+	display: block;
 }
