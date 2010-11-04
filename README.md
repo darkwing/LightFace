@@ -30,5 +30,6 @@ LightFace instances can be created at any time.  There are no arguments other th
 		modal.open();
 	});
 	
+LightFace works great with static content, IFrames, AJAX Requests, tooltips, and images.  LightFace also resizes and repositions when the window is resized or scrolled.  Tested in IE7+, FF, Safari, Opera, Chrome, and iPad.
 
-For specific usage and options, please read the documentation or visit [http://davidwalsh.name/js/lazyload](http://davidwalsh.name/js/lazyLoad)
+For specific usage and options, please read the documentation or visit [http://davidwalsh.name/js/lightface](http://davidwalsh.name/js/lightface)
