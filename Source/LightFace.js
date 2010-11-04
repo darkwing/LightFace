@@ -30,7 +30,7 @@ var LightFace = new Class({
 		title: '',
 		buttons: [],
 		fadeDelay: 150,
-		fadeDuration: 150,
+		fadeDuration: 400,
 		keys: { 
 			esc: function() { this.close(); } 
 		},
@@ -39,6 +39,7 @@ var LightFace = new Class({
 		pad: 100,
 		overlayTitle: false,
 		constrain: false,
+		resetOnScroll: true,
 		errorMessage: '<p>The requested file could not be found.</p>'/*,
 		onOpen: $empty,
 		onClose: $empty,
@@ -66,11 +67,16 @@ var LightFace = new Class({
 		this.box = new Element('table',{
 			'class': 'lightface',
 			styles: {
-				'z-index': this.options.zIndex,
-				opacity: 0
+				'z-index': this.options.zIndex
 			},
-			morph: {
-				duration: this.options.fadeDuration
+			events: {
+				//blur: function() { this.close(); }.bind(this)
+			},
+			tween: {
+				duration: this.options.fadeDuration,
+				onComplete: function() {
+					if(this.box.getStyle('opacity') == 0) this.box.setStyles({ top: -9000, left: -9000 });
+				}.bind(this)
 			}
 		}).inject(document.body,'bottom');
 
@@ -81,7 +87,6 @@ var LightFace = new Class({
 			for(var y = 0; y < len; y++) {
 				var cssClass = verts[x] + hors[y], cell = row.insertCell(y);
 				cell.className = cssClass;
-				document.id(cell).setStyle('opacity',0.4);
 				if (cssClass == 'centerCenter') {
 					this.contentBox = new Element('div',{
 						'class': 'lightfaceContent',
@@ -89,7 +94,10 @@ var LightFace = new Class({
 							width: this.options.width
 						}
 					});
-					document.id(cell).setStyle('opacity',1).appendChild(this.contentBox);
+					cell.appendChild(this.contentBox);
+				}
+				else {
+					document.id(cell).setStyle('opacity',0.4);
 				}
 			}
 		}
@@ -124,7 +132,10 @@ var LightFace = new Class({
 			'class': 'lightfaceOverlay',
 			tween: {
 				link: 'chain',
-				duration: this.options.fadeDuration
+				duration: this.options.fadeDuration,
+				onComplete: function() {
+					if(this.overlay.getStyle('opacity') == 0) this.box.focus();
+				}.bind(this)
 			}
 		}).inject(this.contentBox);
 		if(!this.options.overlayTitle && this.title) this.overlay.setStyle('top',this.title.getSize().y);
@@ -143,6 +154,9 @@ var LightFace = new Class({
 				this.addButton(button.title,button.event,button.submit);
 			},this);
 		}
+		
+		//focus node
+		this.focusNode = this.box;
 		
 		return this;
 	},
@@ -174,7 +188,7 @@ var LightFace = new Class({
 	*/
 	close: function(fast) {
 		if(this.isOpen) {
-			this.box[fast ? 'setStyle' : 'tween']('opacity',0);
+			this.box[fast ? 'setStyles' : 'tween']('opacity',0);
 			this.fireEvent('close');
 			this._detachEvents();
 			this.isOpen = false;
@@ -184,16 +198,14 @@ var LightFace = new Class({
 	
 	open: function(fast) {
 		if(!this.isOpen) {
-			this.box[fast ? 'setStyle' : 'tween']('opacity',1);
-			if(this.resizeOnOpen) {
-				this._resize();
-			}
+			this.box[fast ? 'setStyles' : 'tween']('opacity',1);
+			if(this.resizeOnOpen) this._resize();
 			this.fireEvent('open');
 			this._attachEvents();
-			this.box.setAttribute('tabIndex',0); //accessibility?
 			(function() {
-				this.box.focus();
-			}).bind(this).delay(this.options.fadeDuration);
+				this.focusNode.setAttribute('tabIndex',0);
+				this.focusNode.focus();
+			}).bind(this).delay(this.options.fadeDuration + 10);
 			this.isOpen = true;
 		}
 		return this;
@@ -233,17 +245,25 @@ var LightFace = new Class({
 		this.keyEvent = function(e){
 			if(this.options.keys[e.key]) this.options.keys[e.key].call(this);
 		}.bind(this);
-		this.box.addEvent('keypress',this.keyEvent);
+		this.focusNode.addEvent('keyup',this.keyEvent);
 		
 		this.resizeEvent = this.options.constrain ? function(e) { this._resize(); }.bind(this) : function() { this._position(); }.bind(this);
 		window.addEvent('resize',this.resizeEvent);
+		
+		if(this.options.resetOnScroll) {
+			this.scrollEvent = function() {
+				this._position();
+			}.bind(this);
+			window.addEvent('scroll',this.scrollEvent);
+		}
 		
 		return this;
 	},
 	
 	_detachEvents: function() {
-		this.box.removeEvent('keypress',this.keyEvent);
+		this.focusNode.removeEvent('keyup',this.keyEvent);
 		window.removeEvent('resize',this.resizeEvent);
+		if(this.scrollEvent) window.removeEvent('scroll',this.scrollEvent);
 		return this;
 	},
 	
@@ -277,6 +297,13 @@ var LightFace = new Class({
 	*/
 	toElement: function () {
 		return this.messageBox;
+	},
+	
+	/*
+		Returns entire box
+	*/
+	getBox: function() {
+		return this.box;
 	},
 	
 	/*

@@ -27,6 +27,7 @@
 			light = new LightFace.Image({
 				title: 'Image ' + (index + 1),
 				fadeDuration: 100,
+				fadeDelay: 400,
 				keys: {
 					left: function() {
 						if(index!= 0) this.load(images[--index],'Image ' + (index + 1));

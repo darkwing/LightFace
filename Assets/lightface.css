@@ -1,7 +1,7 @@
 
 .lightface {
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	border-collapse: collapse;
 	position: absolute;
 	top: -9000px;
@@ -9,8 +9,8 @@
 }
 
 .lightface td {
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 	background-color: transparent;
 	vertical-align: top;
 	font-family: "Verdana";
@@ -75,13 +75,13 @@
 	border: 1px solid #3b5998;
 	font-weight: bold;
 	margin: -1px;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 	padding: 5px 10px;
 }
 
 .lightface .lightfaceContent .lightfaceMessage {
 	overflow: auto;
-	margin: 0px;
+	margin: 0;
 	position: relative;
 	padding: 5px 10px;
 	border: 1px solid #fff;

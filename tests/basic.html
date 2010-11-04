@@ -35,10 +35,13 @@
 			 				var confirm = new LightFace({
 			 					width: 200,
 			 					title: 'Confirm',
+								keys: {
+									esc: function() { this.close(); box.unfade(); }
+								},
 			 					content: 'Do you agree?',
 								buttons: [
-									{ title: 'Yes', event: function() { confirm.close(); box.close(); }, submit: true },
-									{ title: 'No', event: function() { confirm.close(); box.unfade(); }, submit: false }
+									{ title: 'Yes', event: function() { this.close(); box.close(); }, submit: true },
+									{ title: 'No', event: function() { this.close(); box.unfade(); }, submit: false }
 								]
 			 				});
 			 				confirm.open();
@@ -53,9 +56,9 @@
 	 		});
 	 		box.open();		
 	 	}
-		
+		/*
 		window.addEvent('domready',function() {
-			var contextFace = new LightFace.Static({
+			contextFace = new LightFace.Static({
 				title: 'Context',
 				content: 'Hello!',
 				width: 80,
@@ -65,8 +68,15 @@
 				if(e) e.stop();
 				contextFace.open(false,e.page.x,e.page.y);
 			});
+			var closer = function(e) {
+				var parent = document.id(contextFace).getParent('.lightface');
+				if(e.target != parent && !parent.contains(e.target)) {
+					contextFace.close();
+				}
+			};
+			document.id(document.body).addEvent('click',closer);
 		});
-		
+		*/
 		
 		
 	</script>

@@ -33,6 +33,7 @@ LightFace Method: constructor {#LightFace:constructor}
 * overlayTitle - (*boolean*, defaults to false)  Should the overlay cover the modal title?
 * constrain - (*boolean*, defaults to false)  Should the modal box constrain content when the window is resized?
 * errorMessage - (*string*, defaults to '<p>The requested file could not be found.</p>')  The error message displayed if a resource is not found.
+* resetOnScroll - (*boolean*, defaults to true)  Keeps the modal box in the same place on the screen if the user scrolls.
 
 ### Returns:
 

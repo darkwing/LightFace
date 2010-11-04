@@ -21,7 +21,8 @@ LightFace instances can be created at any time.  There are no arguments other th
 		content: '<p>This is the LightFace content!</p>',
 		buttons: [
 			{ title: 'Close', event: function() { this.close(); }, submit: false }
-		]
+		],
+		resetOnScroll: true
 	});
 	/* open when link is clicked */
 	document.id('launchModal').addEvent('click',function(e){
