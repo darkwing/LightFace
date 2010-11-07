@@ -3,7 +3,7 @@
 <head>
 	<title>Request LightFace Test</title>
 	<style>
-		@import "../Assets/lightface.css";
+		@import "../Assets/LightFace.css";
 	</style>
 	<link rel="stylesheet" href="../Assets/lightface.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/mootools/1.3.0/mootools.js"></script>
@@ -20,8 +20,8 @@
 				ajaxFace = new LightFace.Request({
 					url: 'ajax.php',
 					buttons: [
-						{ title: 'Submitter', event: function() { alert('hi!'); }, submit: true },
-						{ title: 'Canceler', event: function() { this.close(); }, submit: false }
+						{ title: 'Submitter', event: function() { alert('hi!'); }, color: 'blue' },
+						{ title: 'Canceler', event: function() { this.close(); } }
 					],
 					request: { data: { name: document.id('personName').value || 'PersonWhoIsTooCoolToGiveTheirName' } },
 					title: 'AJAX Demo'

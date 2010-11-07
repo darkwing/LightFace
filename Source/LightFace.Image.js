@@ -43,6 +43,10 @@ LightFace.Image = new Class({
 		if(imageDimensions.y > maxHeight) {
 			this.image.height = maxHeight;
 			this.image.width = (imageDimensions.x * (maxHeight / imageDimensions.y));
+			this.image.setStyles({
+				height: maxHeight,
+				width: (imageDimensions.x * (maxHeight / imageDimensions.y)).toInt()
+			});
 		}
 		
 		//get rid of styles
@@ -66,8 +70,10 @@ LightFace.Image = new Class({
 			events: {
 				load: function() {
 					(function() {
-						this.image.inject(this.messageBox).store('dimensions',this.image.getSize());
+						var setSize = function() { this.image.inject(this.messageBox).store('dimensions',this.image.getSize()); }.bind(this);
+						setSize();
 						this._resize();
+						setSize();
 						this.unfade();
 						this.fireEvent('complete');
 					}).bind(this).delay(10);
@@ -78,10 +84,11 @@ LightFace.Image = new Class({
 					delete this.image;
 					this.messageBox.set('html',this.options.errorMessage).removeClass('lightFaceMessageBoxImage');
 				}
-			}
+			},
+			style: 'width:auto;height:auto;'
 		});
 		this.image.src = url || this.options.url;
-		if(title && this.title) this.title.set('html',title);
+		if(title && this.title) this.title.set('html',title);	
 		return this;
 	}
 });

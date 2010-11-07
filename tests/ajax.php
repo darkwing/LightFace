@@ -1,1 +1,4 @@
-<?php echo 'Hello '.$_POST['name']; ?>
+<?php 
+	sleep(1);
+	echo 'Hello '.$_POST['name']; 
+?>

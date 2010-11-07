@@ -3,10 +3,11 @@
 <head>
 	<title>Basic LightFace Test</title>
 	<style>
-		@import "../Assets/lightface.css";
+		@import "../Assets/LightFace.css";
 	</style>
 	<link rel="stylesheet" href="../Assets/lightface.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/mootools/1.3.0/mootools.js"></script>
+	<script src="mootools-more-drag.js"></script>
 	<script src="../Source/LightFace.js"></script>
 	<script src="../Source/LightFace.IFrame.js"></script>
 	<script src="../Source/LightFace.Image.js"></script>
@@ -17,12 +18,13 @@
 	 	function formFunction() {
 	 		return new LightFace({
 	 			title: $('demo1title').value,
-	 			content: $('demo1content').value
+	 			content: $('demo1content').value,
+				draggable: true
 	 		}).open();
 	 	}
 
 	 	function termsFunction() {
-	  		var box = new LightFace({ 
+	  		box = new LightFace({ 
 	 			title: 'Terms and conditions', 
 				width: 400,
 				height: 300,
@@ -40,13 +42,13 @@
 								},
 			 					content: 'Do you agree?',
 								buttons: [
-									{ title: 'Yes', event: function() { this.close(); box.close(); }, submit: true },
-									{ title: 'No', event: function() { this.close(); box.unfade(); }, submit: false }
+									{ title: 'Yes', event: function() { this.close(); box.close(); }, color: 'green' },
+									{ title: 'No', event: function() { this.close(); box.unfade(); } }
 								]
 			 				});
 			 				confirm.open();
 						},
-						submit: true
+						color: 'blue'
 					},
 					{
 						title: 'Close',

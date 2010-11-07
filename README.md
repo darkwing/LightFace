@@ -20,7 +20,7 @@ LightFace instances can be created at any time.  There are no arguments other th
 		title: 'Hello from LightFace!',
 		content: '<p>This is the LightFace content!</p>',
 		buttons: [
-			{ title: 'Close', event: function() { this.close(); }, submit: false }
+			{ title: 'Close', event: function() { this.close(); }, color: 'blue' }
 		],
 		resetOnScroll: true
 	});

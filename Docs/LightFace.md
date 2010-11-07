@@ -25,15 +25,16 @@ LightFace Method: constructor {#LightFace:constructor}
 * draggable - (*boolean*, defaults to false)  Should the modal box be draggable by its title? *the Drag class is not included with this package, but is available with MooTools More*
 * title - (*string*, defaults to '')  The modal's initial title.
 * content - (*string*, defaults to '<p>Message not specified.</p>')  The modal's initial content.
-* buttons - (*array*, defaults to [])  An array containing any number of objects containing button information.
+* buttons - (*array*, defaults to [])  An array of objects containing button information: { title:'', event:fn, color:'' }.
 * fadeDelay - (*integer*, defaults to 150)  The delay before instructing the overlay to fade in/out.
 * fadeDuration - (*integer*, defaults to 150)  The duration of overlay fade while content is loading.
 * keys - (*object*, defaults to object w/ 'esc' key handler)  Key handlers to add events to while the modal box is open.
 * zIndex - (*integer*, defaults to 9001)  The desired zIndex of the modal.
-* overlayTitle - (*boolean*, defaults to false)  Should the overlay cover the modal title?
+* overlayAll - (*boolean*, defaults to true)  Should the overlay cover the entire modal dialog?
 * constrain - (*boolean*, defaults to false)  Should the modal box constrain content when the window is resized?
 * errorMessage - (*string*, defaults to '<p>The requested file could not be found.</p>')  The error message displayed if a resource is not found.
 * resetOnScroll - (*boolean*, defaults to true)  Keeps the modal box in the same place on the screen if the user scrolls.
+* baseClass - (*string*, defaults to 'lightface')  The base class of the modal box.
 
 ### Returns:
 
