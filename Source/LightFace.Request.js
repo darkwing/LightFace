@@ -33,7 +33,7 @@ LightFace.Request = new Class({
 		if(this.options.url) this.load();
 	},
 	load: function(url,title) {
-		var props = $extend({
+		var props = (Object.append || $extend)({
 			onRequest: function() {
 				this.fade();
 				this.fireEvent('request');

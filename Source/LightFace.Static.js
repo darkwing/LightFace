@@ -33,7 +33,7 @@ LightFace.Static = new Class({
 		this._position(x,y);
 	},
 	_position: function(x,y) {
-		if(!$defined(x)) return;
+		if(x == null) return;
 		this.box.setStyles({
 			top: y - this.options.offsets.y,
 			left: x - this.options.offsets.x

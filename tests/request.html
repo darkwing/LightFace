@@ -23,7 +23,12 @@
 						{ title: 'Submitter', event: function() { alert('hi!'); }, color: 'blue' },
 						{ title: 'Canceler', event: function() { this.close(); } }
 					],
-					request: { data: { name: document.id('personName').value || 'PersonWhoIsTooCoolToGiveTheirName' } },
+					request: { 
+						data: { 
+							name: document.id('personName').value || 'PersonWhoIsTooCoolToGiveTheirName' 
+						},
+						method: 'post'
+					},
 					title: 'AJAX Demo'
 				}).open();
 				

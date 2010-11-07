@@ -73,7 +73,7 @@ LightFace.Image = new Class({
 						var setSize = function() { this.image.inject(this.messageBox).store('dimensions',this.image.getSize()); }.bind(this);
 						setSize();
 						this._resize();
-						setSize();
+						setSize(); //stupid ie
 						this.unfade();
 						this.fireEvent('complete');
 					}).bind(this).delay(10);

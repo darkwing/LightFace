@@ -110,7 +110,7 @@ var LightFace = new Class({
 				'class': 'lightfaceTitle',
 				html: this.options.title
 			}).inject(this.contentBox);
-			if(this.options.draggable && $defined(window['Drag'])) {
+			if(this.options.draggable && window['Drag'] != null) {
 				this.draggable = true;
 				new Drag(this.box,{ handle: this.title });
 				this.title.addClass('lightfaceDraggable');
