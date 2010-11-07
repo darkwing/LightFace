@@ -1,8 +1,4 @@
 /*
-	Inspired by Bert Ramaker's Facebox for jQuery and MooTools:  http://bertramakers.com/labs/
-	Rewritten and optimized by David Walsh:  http://davidwalsh.name
-*/
-/*
 ---
 description:     LightFace.Request
 
