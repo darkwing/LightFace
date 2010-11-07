@@ -85,7 +85,10 @@ LightFace.Image = new Class({
 					this.messageBox.set('html',this.options.errorMessage).removeClass('lightFaceMessageBoxImage');
 				}
 			},
-			style: 'width:auto;height:auto;'
+			styles: {
+				width: 'auto',
+				height: 'auto'
+			}
 		});
 		this.image.src = url || this.options.url;
 		if(title && this.title) this.title.set('html',title);	

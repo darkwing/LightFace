@@ -48,6 +48,7 @@ LightFace.Request = new Class({
 			}.bind(this),
 			onComplete: function() {
 				this._resize();
+				this._ie6Size();
 				this.messageBox.setStyle('opacity',1);
 				this.unfade();
 				this.fireEvent('complete');

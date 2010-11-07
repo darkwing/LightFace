@@ -150,9 +150,7 @@ var LightFace = new Class({
 			}
 		}).inject(this.contentBox);
 		if(!this.options.overlayAll) {
-			this.overlay.setStyles({
-				top: (this.title ? this.title.getSize().y: 0)
-			});
+			this.overlay.setStyle('top',(this.title ? this.title.getSize().y - 1: 0));
 		}
 		
 		//create initial buttons
