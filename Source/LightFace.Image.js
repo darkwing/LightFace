@@ -78,7 +78,10 @@ LightFace.Image = new Class({
 					this.image.destroy();
 					delete this.image;
 					this.messageBox.set('html',this.options.errorMessage).removeClass('lightFaceMessageBoxImage');
-				}
+				}.bind(this),
+				click: function() {
+					this.close();
+				}.bind(this)
 			},
 			styles: {
 				width: 'auto',
