@@ -1,6 +1,6 @@
 /*
 ---
-description:     LightFace.IFrame
+description: LightFace.IFrame
 
 authors:
   - David Walsh (http://davidwalsh.name)
@@ -9,7 +9,7 @@ license:
   - MIT-style license
 
 requires:
-  core/1.2.1:   '*'
+  core/1.2.1: '*'
 
 provides:
   - LightFace.IFrame

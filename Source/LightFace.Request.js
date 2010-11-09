@@ -1,6 +1,6 @@
 /*
 ---
-description:     LightFace.Request
+description: LightFace.Request
 
 authors:
   - David Walsh (http://davidwalsh.name)
@@ -9,7 +9,7 @@ license:
   - MIT-style license
 
 requires:
-  core/1.2.1:   '*'
+  core/1.2.1: '*'
 
 provides:
   - LightFace.Request
