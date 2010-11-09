@@ -14,7 +14,6 @@ provides: [LightFace.IFrame]
 
 ...
 */
-
 LightFace.IFrame = new Class({
 	Extends: LightFace,
 	options: {

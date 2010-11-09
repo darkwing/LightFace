@@ -14,7 +14,6 @@ provides: [LightFace.Static]
 
 ...
 */
-
 LightFace.Static = new Class({
 	Extends: LightFace,
 	options: {
