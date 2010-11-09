@@ -15,7 +15,6 @@ provides:
   - LightFace.Request
 ...
 */
-/* LightFace.Request */
 LightFace.Request = new Class({
 	Extends: LightFace,
 	options: {

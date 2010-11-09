@@ -15,7 +15,6 @@ provides:
   - LightFace.Image
 ...
 */
-/* LightFace.Image - Used to Load Images */
 LightFace.Image = new Class({
 	Extends: LightFace,
 	options: {

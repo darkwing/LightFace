@@ -15,7 +15,6 @@ provides:
   - LightFace.Static
 ...
 */
-/* LightFace.Static - Use to work well with IFrames */
 LightFace.Static = new Class({
 	Extends: LightFace,
 	options: {
