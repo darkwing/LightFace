@@ -1,6 +1,6 @@
 /*
 ---
-description: LightFace.IFrame
+description: LightFace
 
 authors:
   - David Walsh (http://davidwalsh.name)
@@ -12,6 +12,7 @@ requires:
   core/1.2.1: '*'
 
 provides:
+  - LightFace
   - LightFace.IFrame
 ...
 */
