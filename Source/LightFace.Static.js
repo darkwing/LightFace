@@ -12,17 +12,14 @@ requires:
   core/1.2.1: '*'
 
 provides:
-  - LightFace
   - LightFace.Static
 ...
 */
+
 LightFace.Static = new Class({
 	Extends: LightFace,
 	options: {
-		offsets: {
-			x: 20,
-			y: 20
-		}
+		offsets: { x: 20, y: 20 }
 	},
 	open: function(fast,x,y) {
 		this.parent(fast);

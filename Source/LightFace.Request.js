@@ -12,10 +12,10 @@ requires:
   core/1.2.1: '*'
 
 provides:
-  - LightFace
   - LightFace.Request
 ...
 */
+
 LightFace.Request = new Class({
 	Extends: LightFace,
 	options: {

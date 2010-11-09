@@ -6,16 +6,16 @@ authors:
   - David Walsh (http://davidwalsh.name)
 
 license:
-  - MIT-style license	
+  - MIT-style license
 
 requires:
   core/1.2.1: '*'
 
 provides:
-  - LightFace
   - LightFace.Image
 ...
 */
+
 LightFace.Image = new Class({
 	Extends: LightFace,
 	options: {

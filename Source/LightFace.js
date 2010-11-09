@@ -15,6 +15,7 @@ provides:
   - LightFace
 ...
 */
+
 var LightFace = new Class({
 	
 	Implements: [Options,Events],
