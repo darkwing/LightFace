@@ -336,7 +336,7 @@ var LightFace = new Class({
 	// Cleanup
 	destroy: function() {
 		this._detachEvents();
-		this.button.each(function(button) {
+		this.buttons.each(function(button) {
 			button.removeEvents('click');
 		});
 		this.box.dispose();
