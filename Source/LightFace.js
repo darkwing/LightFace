@@ -340,5 +340,6 @@ var LightFace = new Class({
 			button.removeEvents('click');
 		});
 		this.box.dispose();
+		delete this.box;
 	}
 });
