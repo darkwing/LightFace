@@ -101,16 +101,16 @@ var LightFace = new Class({
 		}
 		
 		//draw title
-		if(this.options.title) {
-			this.title = new Element('h2',{
-				'class': 'lightfaceTitle',
-				html: this.options.title
-			}).inject(this.contentBox);
-			if(this.options.draggable && window['Drag'] != null) {
-				this.draggable = true;
-				new Drag(this.box,{ handle: this.title });
-				this.title.addClass('lightfaceDraggable');
-			}
+		
+		this.title = new Element('h2',{
+			'class': 'lightfaceTitle',
+			html: this.options.title
+		}).inject(this.contentBox);
+
+		if(this.options.draggable && window['Drag'] != null) {
+			this.draggable = true;
+			new Drag(this.box,{ handle: this.title });
+			this.title.addClass('lightfaceDraggable');
 		}
 		
 		//draw message box
@@ -261,7 +261,9 @@ var LightFace = new Class({
 	// Loads content
 	load: function(content,title) {
 		if(content) this.messageBox.set('html',content);
-		if(title && this.title) this.title.set('html',title);
+		title = title || this.options.title;
+		if(title) this.title.set('html', title).setStyle('display', 'block');
+		else this.title.setStyle('display', 'none');
 		this.fireEvent('complete');
 		return this;
 	},
