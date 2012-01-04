@@ -22,6 +22,7 @@ var LightFace = new Class({
 	options: {
 		width: 'auto',
 		height: 'auto',
+		destroyOnClose: false,
 		draggable: false,
 		title: '',
 		buttons: [],
@@ -37,7 +38,11 @@ var LightFace = new Class({
 		constrain: false,
 		resetOnScroll: true,
 		baseClass: 'lightface',
-		errorMessage: '<p>The requested file could not be found.</p>'/*,
+		errorMessage: '<p>The requested file could not be found.</p>',
+		/* Mask Options */
+		closeOnMaskClick: false,
+		maskClass: 'lightfaceMask',
+		showMask: true/*,
 		onOpen: $empty,
 		onClose: $empty,
 		onFade: $empty,
@@ -56,17 +61,31 @@ var LightFace = new Class({
 		this.buttons = {};
 		this.resizeOnOpen = true;
 		this.ie6 = typeof document.body.style.maxHeight == "undefined";
+		this.oMask = null;
+		this.oParent = null; /* Parent LightFace object */
+		this.dependents = []; /* Dependent LightFace objects */
 		this.draw();
 	},
 	
 	draw: function() {
+
+		//create modal mask
+		if (this.options.showMask && window['Mask'] != null) {
+			this.oMask = new Mask(null, {
+				'class': this.options.maskClass,
+				onClick: function() {
+					if (this.options.closeOnMaskClick) this.close();
+				}.bind(this)
+			});
+		}
 		
 		//create main box
 		this.box = new Element('table',{
 			'class': this.options.baseClass,
 			styles: {
 				'z-index': this.options.zIndex,
-				opacity: 0
+				opacity: 0,
+				visibility: 'hidden'
 			},
 			tween: {
 				duration: this.options.fadeDuration,
@@ -95,7 +114,7 @@ var LightFace = new Class({
 					cell.appendChild(this.contentBox);
 				}
 				else {
-					document.id(cell).setStyle('opacity',0.4);
+					document.id(cell).setStyles({ visibility: 'visible', opacity: 0.4 });
 				}
 			}
 		}
@@ -121,7 +140,7 @@ var LightFace = new Class({
 				height: this.options.height
 			}
 		}).inject(this.contentBox);
-		
+
 		//button container
 		this.footer = new Element('div',{
 			'class': 'lightfaceFooter',
@@ -134,7 +153,8 @@ var LightFace = new Class({
 		this.overlay = new Element('div',{
 			html: '&nbsp;',
 			styles: {
-				opacity: 0
+				opacity: 0,
+				visibility: 'hidden'
 			},
 			'class': 'lightfaceOverlay',
 			tween: {
@@ -162,7 +182,48 @@ var LightFace = new Class({
 		
 		return this;
 	},
-	
+
+	// Manage parent and dependent instances of LightFace.
+	attachDependent: function(oDependent) {
+		if (instanceOf(oDependent, LightFace) && this.dependents.indexOf(oDependent) === -1) {
+			this.dependents.push(oDependent);
+			oDependent.attachParent(this);
+		}
+		return this;
+	},
+	attachParent: function(oParent) {
+		if (instanceOf(oParent, LightFace)) {
+			this.oParent = oParent;
+			if (oParent.dependents.indexOf(this) === -1) {
+				oParent.attachDependent(this);
+			}
+		}
+		return this;
+	},
+	_closeDependents: function() {
+		if (this.dependents.length) {
+			this.dependents.each(function(oObj) {
+				oObj.close(true, this.options.destroyOnClose);
+			}, this);
+//			this.dependents.empty();
+		}
+		return this;
+	},
+	_detachDependent: function(oDependent) {
+		if (instanceOf(oDependent, LightFace)) {
+			this.dependents.erase(oDependent);
+			oDependent.oParent = null;
+		}
+		return this;
+	},
+	_detachParent: function() {
+		if (this.oParent) {
+			this.oParent._detachDependent(this);
+			this.oParent = null;
+		}
+		return this;
+	},
+
 	// Manage buttons
 	addButton: function(title,clickEvent,color) {
 		this.footer.setStyle('display','block');
@@ -202,19 +263,35 @@ var LightFace = new Class({
 	},
 	
 	// Open and close box
-	close: function(fast) {
+	close: function(fast, bDestroy) {
 		if(this.isOpen) {
-			this.box[fast ? 'setStyles' : 'tween']('opacity',0);
+			this._closeDependents();
+			if (fast) {
+				this.box.setStyle('opacity', 0);
+				this.box.setStyle('visibility', 'hidden');
+				if (this.oMask) this.oMask.hide();
+			}
+			else {
+				this.box.get('tween').start('opacity', 0).chain(function()
+				{
+					this.box.setStyle('visibility', 'hidden');
+					if (this.oMask) this.oMask.hide();
+					if (bDestroy || this.options.destroyOnClose) this.destroy();
+				}.bind(this));
+			}
 			this.fireEvent('close');
 			this._detachEvents();
 			this.isOpen = false;
+			if (fast && (bDestroy || this.options.destroyOnClose)) this.destroy();
 		}
 		return this;
 	},
 	
 	open: function(fast) {
 		if(!this.isOpen) {
-			this.box[fast ? 'setStyles' : 'tween']('opacity',1);
+			if (this.oMask) this.oMask.show();
+			this.box.setStyle('visibility', 'visible');
+			this.box[fast ? 'setStyle' : 'tween']('opacity', 1);
 			if(this.resizeOnOpen) this._resize();
 			this.fireEvent('open');
 			this._attachEvents();
@@ -235,6 +312,7 @@ var LightFace = new Class({
 	fade: function(fade,delay) {
 		this._ie6Size();
 		(function() {
+			this.overlay.setStyle('visibility', 'visible');
 			this.overlay.setStyle('opacity',fade || 1);
 		}.bind(this)).delay(delay || 0);
 		this.fireEvent('fade');
@@ -242,7 +320,7 @@ var LightFace = new Class({
 	},
 	unfade: function(delay) {
 		(function() {
-			this.overlay.fade(0);
+			this.overlay.get('tween').start('opacity', 0).chain(function(){ this.element.setStyle('visibility', 'hidden'); });
 		}.bind(this)).delay(delay || this.options.fadeDelay);
 		this.fireEvent('unfade');
 		return this;
@@ -337,7 +415,10 @@ var LightFace = new Class({
 	
 	// Cleanup
 	destroy: function() {
+		this._closeDependents();
+		this._detachParent();
 		this._detachEvents();
+		if (this.oMask) this.oMask.destroy();
 		this.buttons.each(function(button) {
 			button.removeEvents('click');
 		});

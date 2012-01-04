@@ -35,6 +35,10 @@ LightFace Method: constructor {#LightFace:constructor}
 * errorMessage - (*string*, defaults to '<p>The requested file could not be found.</p>')  The error message displayed if a resource is not found.
 * resetOnScroll - (*boolean*, defaults to true)  Keeps the modal box in the same place on the screen if the user scrolls.
 * baseClass - (*string*, defaults to 'lightface')  The base class of the modal box.
+* destroyOnClose - (*boolean*, defaults to false)  Should the modal box destory it self when it closes?
+* closeOnMaskClick - (*boolean*, defaults to false)  Should the modal box close when the mask is clicked?
+* maskClass - (*string*, defaults to 'lightfaceMask')  The class of the mask.
+* showMask - (*boolean*, defaults to true)  Should the mask be displayed? If true this prevents user interaction with the page while the modal box is open. *the Mask class is provided in 'mootools-more-drag-mask.js' and also available with MooTools More*
 
 ### Returns:
 
@@ -180,11 +184,12 @@ Closes the modal dialog.
 
 ### Syntax:
 
-	modal.close(fast);
+	modal.close(fast, bDestroy);
 	
 ### Arguments:
 
 1. fast - (*boolean*)  If true, skips fading and quickly sets opacity to 0%.
+2. bDestroy - (*boolean*)  If true, the class is destroyed after it closes. When true, this overrides the destroyOnClose option.
 	
 LightFace Method: fade {#LightFace:fade}
 ---------------------------------------------------------------
@@ -222,7 +227,37 @@ Loads static content into the modal dialog.
 
 1. content - (*string*)  The content to place within the modal dialog.
 2. title - (*string*)  The title of the modal dialog. (not required) 
-	
+
+
+LightFace Method: attachDependent {#LightFace:attachDependent}
+---------------------------------------------------------------
+
+Adds an instance of LightFace as a dependent, when the parent instance closes it will close the dependents first.
+A parent can have more than one dependent.
+
+### Syntax:
+
+	modal.attachDependent(LightFaceObject);
+
+### Arguments:
+
+1. LightFaceObject - (*LightFace Object*)  A dependent LightFace instance.
+
+
+LightFace Method: attachParent {#LightFace:attachParent}
+---------------------------------------------------------------
+
+Adds an instance of LightFace as a parent, when the parent instance closes it will close the dependents first.
+A dependent can only have one parent.
+
+### Syntax:
+
+	modal.attachParent(LightFaceObject);
+
+### Arguments:
+
+1. LightFaceObject - (*LightFace Object*)  A parent LightFace instance.
+
 
 LightFace Method: destroy {#LightFace:destroy}
 ---------------------------------------------------------------

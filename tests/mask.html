@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Mask LightFace Test</title>
+	<style>
+		@import "../Assets/LightFace.css";
+	</style>
+	<link rel="stylesheet" href="../Assets/lightface.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.2/mootools.js"></script>
+	<script src="mootools-more-drag-mask.js"></script>
+	<script src="../Source/LightFace.js"></script>
+	<script src="../Source/LightFace.IFrame.js"></script>
+	<script src="../Source/LightFace.Image.js"></script>
+	<script src="../Source/LightFace.Request.js"></script>
+	<script src="../Source/LightFace.Static.js"></script>
+	<script>
+		
+	 	function formFunction()
+		{
+	 		return new LightFace(
+			{
+				showMask: true,
+				closeOnMaskClick: true,
+				destroyOnClose: true,
+	 			title: $('demo1title').value,
+	 			content: $('demo1content').value,
+				draggable: true
+	 		}).open();
+	 	}
+
+	 	function termsFunction()
+		{
+	  		box = new LightFace(
+			{ 
+	 			title: 'Terms and conditions', 
+				width: 400,
+				height: 300,
+				destroyOnClose: true,
+				showMask: true,
+				closeOnMaskClick: true,
+	  			content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut a elit quis arcu lacinia consequat. Maecenas ac felis. Ut nisi orci, cursus id, mattis ac, molestie et, nisl. Phasellus id purus. Aliquam at dui. Cras ac urna eget lectus dictum pulvinar. Nulla facilisi. Vivamus vulputate pede vel nisl. Nam purus est, mollis quis, tempor ac, accumsan ac, orci. Vestibulum felis dolor, luctus vitae, dignissim vel, aliquam viverra, quam. Cras quam neque, mattis nec, fringilla et, molestie vel, libero. Integer purus. Mauris iaculis pellentesque turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lobortis ipsum quis est condimentum scelerisque. Maecenas hendrerit nunc eget sem.<br \/><br \/>Curabitur id massa. Sed quis ipsum id quam venenatis scelerisque. Ut felis. Cras pellentesque tempus mi. Sed convallis pede eu nibh. Suspendisse potenti. Phasellus non felis. Nam sollicitudin laoreet massa. Cras quis nisl. Ut mauris odio, varius ac, pellentesque ut, rhoncus eget, ligula. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam iaculis vestibulum felis. Donec vulputate nibh. Duis suscipit. Ut aliquet semper purus. Morbi et justo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc egestas dapibus orci. Quisque vel lectus.<br \/><br \/>Phasellus in nunc sit amet dolor laoreet tincidunt. Nullam vitae arcu id ligula fringilla porttitor. Cras viverra tortor quis diam. Proin vitae mauris. Nunc aliquam turpis non mauris gravida pretium. Curabitur venenatis, orci sed ornare consequat, orci arcu sagittis nisi, quis ultrices sapien erat a libero. Ut posuere lorem aliquam nibh. Nam urna dui, euismod eget, varius eu, ornare vel, orci. Praesent mi elit, ultricies eleifend, suscipit quis, porta non, purus. Proin hendrerit luctus felis. Cras blandit nulla nec erat commodo vestibulum. Aliquam id enim eget nibh condimentum viverra. Nunc elementum, sapien in tincidunt viverra, tellus orci convallis sapien, quis fermentum metus sem quis velit. Proin sit amet nulla. Ut commodo. Donec tincidunt commodo eros. Nullam vestibulum commodo leo. Sed ante. Duis accumsan lorem eu nunc auctor suscipit.",
+	 			buttons: [
+					{ 
+						title: 'I Agree', 
+						event: function()
+						{  
+							box.fade(0.5);
+			 				var confirm = new LightFace(
+							{
+			 					width: 200,
+								destroyOnClose: true,
+								showMask: false,
+			 					title: 'Confirm',
+								keys: {
+									esc: function() { this.close(); box.unfade(); }
+								},
+			 					content: 'Do you agree?',
+								buttons: [
+									{ title: 'Yes', event: function() { this.close(true); box.close(); }, color: 'green' },
+									{ title: 'No', event: function() { this.close(); box.unfade(); } }
+								]
+			 				});
+							box.attachDependent(confirm);
+			 				confirm.open();
+						},
+						color: 'blue'
+					},
+					{
+						title: 'Close',
+						event: function() { this.close(); }
+					}
+				]
+	 		});
+	 		box.open();		
+	 	}
+		/*
+		window.addEvent('domready',function() {
+			contextFace = new LightFace.Static({
+				title: 'Context',
+				content: 'Hello!',
+				width: 80,
+				height: 100
+			});
+			document.id('context-link').addEvent('click',function(e){
+				if(e) e.stop();
+				contextFace.open(false,e.page.x,e.page.y);
+			});
+			var closer = function(e) {
+				var parent = document.id(contextFace).getParent('.lightface');
+				if(e.target != parent && !parent.contains(e.target)) {
+					contextFace.close();
+				}
+			};
+			document.id(document.body).addEvent('click',closer);
+		});
+		*/
+		
+		
+	</script>
+</head>
+<body>
+	
+	<h3>Simple demo</h3>
+	
+	<table class="formtable">
+		<tr>
+			<td>Title</td>
+			<td><input type="text" id="demo1title" value="Test" /></td>
+		</tr>
+
+		<tr>
+			<td>content</td>
+			<td><textarea id="demo1content">This is my test content.</textarea></td>
+		</tr>
+		<tr>
+			<td colspan="2" style="text-align: right;">
+				<input type="button" value="Display" onclick="javascript: formFunction();" class="submit" />			
+			</td>
+		</tr>
+	</table><br />
+	
+	<h3>Terms and conditions demo</h3>
+	<p>Do you agree to our <a href="javascript: termsFunction();">terms and conditions</a>?</p><br />
+	
+	<h3>Right-Click Demo</h3>
+	<p>Right click <a href="" id="context-link">this link</a> to set the dialog here.</p>
+	
+	<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+	
+</body>
+</html>
