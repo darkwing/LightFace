@@ -170,7 +170,6 @@ var LightFace = new Class({
 		}
 		
 		//create initial buttons
-		this.buttons = [];
 		if(this.options.buttons.length) {
 			this.options.buttons.each(function(button) {
 				this.addButton(button.title,button.event,button.color);
@@ -419,7 +418,7 @@ var LightFace = new Class({
 		this._detachParent();
 		this._detachEvents();
 		if (this.oMask) this.oMask.destroy();
-		this.buttons.each(function(button) {
+		Object.each(this.buttons, function(button) {
 			button.removeEvents('click');
 		});
 		this.box.dispose();
