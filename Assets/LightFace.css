@@ -1,8 +1,21 @@
 
+.lightfaceMask
+{
+	position: absolute;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+	z-index: 999;
+	background: #fff;
+}
+
 .lightface {
 	margin: 0;
 	padding: 0;
 	border-collapse: collapse;
+/* Removes focus() selection outline
+	outline: none;
+*/
 	position: absolute;
 	top: -9000px;
 	left: -9000px;
