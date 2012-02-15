@@ -9,7 +9,7 @@ license:
   - MIT-style license
 
 requires:
-  core/1.2.1:   '*'
+  - LightFace
 
 provides:
   - LightFace.Request
@@ -49,10 +49,10 @@ LightFace.Request = new Class({
 				this.fireEvent('complete');
 			}.bind(this)
 		},this.options.request);
-		
+
 		if(title && this.title) this.title.set('html',title);
 		if(!props.url) props.url = url || this.options.url;
-		
+
 		new Request(props).send();
 		return this;
 	}
