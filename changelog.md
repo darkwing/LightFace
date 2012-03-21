@@ -3,6 +3,10 @@ LightFace
 
 The following changes have been made to LightFace.
 
+03/21/2012
+----------
+	+ Updated overlay to have visibility:hidden to work best with Moo 1.4+
+	+ Tag updated from .96 to .97
 
 11/17/2010
 ----------

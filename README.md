@@ -14,18 +14,19 @@ LightFace instances can be created at any time.  There are no arguments other th
 	#JS
 	/* create LightFace instance */
 	var modal = new LightFace({
-		width: 'auto',
+		width: "auto",
 		height: 400,
 		draggable: true,
-		title: 'Hello from LightFace!',
-		content: '<p>This is the LightFace content!</p>',
+		title: "Hello from LightFace!",
+		content: "<p>This is the LightFace content!</p>",
 		buttons: [
-			{ title: 'Close', event: function() { this.close(); }, color: 'blue' }
+			{ title: "Close", event: function() { this.close(); }, color: "blue" }
 		],
 		resetOnScroll: true
 	});
+
 	/* open when link is clicked */
-	document.id('launchModal').addEvent('click',function(e){
+	document.id("launchModal").addEvent("click", function(e){
 		e.stop();
 		modal.open();
 	});
