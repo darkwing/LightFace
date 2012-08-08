@@ -71,7 +71,7 @@ var LightFace = new Class({
 			tween: {
 				duration: this.options.fadeDuration,
 				onComplete: function() {
-					if(this.box.getStyle("opacity") == 0) {
+					if(this.box && this.box.getStyle("opacity") == 0) {
 						this.box.setStyles({ top: -9000, left: -9000 });
 					}
 				}.bind(this)
