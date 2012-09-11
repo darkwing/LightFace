@@ -19,11 +19,11 @@ LightFace.Image = new Class({
 	Extends: LightFace,
 	options: {
 		constrain: true,
-		url: ''
+		url: ""
 	},
 	initialize: function(options) {
 		this.parent(options);
-		this.url = '';
+		this.url = "";
 		this.resizeOnOpen = false;
 		if(this.options.url) this.load();
 	},
@@ -32,7 +32,7 @@ LightFace.Image = new Class({
 		var maxHeight = window.getSize().y - this.options.pad;
 
 		//get the image size
-		var imageDimensions = document.id(this.image).retrieve('dimensions');
+		var imageDimensions = document.id(this.image).retrieve("dimensions");
 
 		//if image is taller than window...
 		if(imageDimensions.y > maxHeight) {
@@ -45,51 +45,53 @@ LightFace.Image = new Class({
 		}
 
 		//get rid of styles
-		this.messageBox.setStyles({ height: '', width: '' });
+		this.messageBox.setStyles({ height: "", width: "" });
 
 		//position the box
 		this._position();
 	},
-	load: function(url,title) {
+	load: function(url, title) {
 		//keep current height/width
-		var currentDimensions = { x: '', y: '' };
+		var currentDimensions = { x: "", y: "" };
 		if(this.image) currentDimensions = this.image.getSize();
 		///empty the content, show the indicator
-		this.messageBox.set('html','').addClass('lightFaceMessageBoxImage').setStyles({
+		this.messageBox.set("html", "").addClass("lightFaceMessageBoxImage").setStyles({
 			width: currentDimensions.x,
 			height: currentDimensions.y
 		});
 		this._position();
 		this.fade();
-		this.image = new Element('img',{
+		this.image = new Element("img", {
 			events: {
 				load: function() {
 					(function() {
-						var setSize = function() { this.image.inject(this.messageBox).store('dimensions',this.image.getSize()); }.bind(this);
+						var setSize = function() {
+							this.image.inject(this.messageBox).store("dimensions", this.image.getSize());
+						}.bind(this);
 						setSize();
 						this._resize();
 						setSize(); //stupid ie
 						this.unfade();
-						this.fireEvent('complete');
+						this.fireEvent("complete");
 					}).bind(this).delay(10);
 				}.bind(this),
 				error: function() {
-					this.fireEvent('error');
+					this.fireEvent("error");
 					this.image.destroy();
 					delete this.image;
-					this.messageBox.set('html',this.options.errorMessage).removeClass('lightFaceMessageBoxImage');
+					this.messageBox.set("html", this.options.errorMessage).removeClass("lightFaceMessageBoxImage");
 				}.bind(this),
 				click: function() {
 					this.close();
 				}.bind(this)
 			},
 			styles: {
-				width: 'auto',
-				height: 'auto'
+				width: "auto",
+				height: "auto"
 			}
 		});
 		this.image.src = url || this.options.url;
-		if(title && this.title) this.title.set('html',title);
+		if(title && this.title) this.title.set("html", title);
 		return this;
 	}
 });

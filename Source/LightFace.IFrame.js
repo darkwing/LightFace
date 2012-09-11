@@ -18,34 +18,34 @@ provides:
 LightFace.IFrame = new Class({
 	Extends: LightFace,
 	options: {
-		url: ''
+		url: ""
 	},
 	initialize: function(options) {
 		this.parent(options);
 		if(this.options.url) this.load();
 	},
-	load: function(url,title) {
+	load: function(url, title) {
 		this.fade();
 		if(!this.iframe) {
-			this.messageBox.set('html','');
+			this.messageBox.set("html", "");
 			this.iframe = new IFrame({
 				styles: {
-					width: '100%',
-					height: '100%'
+					width: "100%",
+					height: "100%"
 				},
 				events: {
 					load: function() {
 						this.unfade();
-						this.fireEvent('complete');
+						this.fireEvent("complete");
 					}.bind(this)
 				},
 				border: 0
 			}).inject(this.messageBox);
-			this.messageBox.setStyles({ padding:0, overflow:'hidden' });
+			this.messageBox.setStyles({ padding: 0, overflow: "hidden" });
 		}
-		if(title) this.title.set('html',title);
+		if(title) this.title.set("html", title);
 		this.iframe.src = url || this.options.url;
-		this.fireEvent('request');
+		this.fireEvent("request");
 		return this;
 	}
 });

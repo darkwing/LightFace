@@ -23,11 +23,11 @@ LightFace.Static = new Class({
 			y: 20
 		}
 	},
-	open: function(fast,x,y) {
+	open: function(fast, x, y) {
 		this.parent(fast);
-		this._position(x,y);
+		this._position(x, y);
 	},
-	_position: function(x,y) {
+	_position: function(x, y) {
 		if(x == null) return;
 		this.box.setStyles({
 			top: y - this.options.offsets.y,
