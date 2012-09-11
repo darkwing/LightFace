@@ -9,7 +9,7 @@ license:
   - MIT-style license
 
 requires:
-  core/1.2.1:   "*"
+  - LightFace
 
 provides:
   - LightFace.IFrame

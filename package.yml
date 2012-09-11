@@ -5,3 +5,9 @@ category:  Interface
 tags:  [lightbox,facebook,overlay,modal]
 docs:  http://davidwalsh.name/js/lightface
 demo:  http://davidwalsh.name/dw-content/lightface.php
+sources:
+  - "Source/LightFace.js"
+  - "Source/LightFace.Image.js"
+  - "Source/LightFace.IFrame.js"
+  - "Source/LightFace.Static.js"
+  - "Source/LightFace.Request.js"

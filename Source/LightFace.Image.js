@@ -6,10 +6,10 @@ authors:
   - David Walsh (http://davidwalsh.name)
 
 license:
-  - MIT-style license	
+  - MIT-style license
 
 requires:
-  core/1.2.1:   "*"
+  - LightFace
 
 provides:
   - LightFace.Image
@@ -30,10 +30,10 @@ LightFace.Image = new Class({
 	_resize: function() {
 		//get the largest possible height
 		var maxHeight = window.getSize().y - this.options.pad;
-		
+
 		//get the image size
 		var imageDimensions = document.id(this.image).retrieve("dimensions");
-		
+
 		//if image is taller than window...
 		if(imageDimensions.y > maxHeight) {
 			this.image.height = maxHeight;
@@ -43,10 +43,10 @@ LightFace.Image = new Class({
 				width: (imageDimensions.x * (maxHeight / imageDimensions.y)).toInt()
 			});
 		}
-		
+
 		//get rid of styles
 		this.messageBox.setStyles({ height: "", width: "" });
-		
+
 		//position the box
 		this._position();
 	},
@@ -65,8 +65,8 @@ LightFace.Image = new Class({
 			events: {
 				load: function() {
 					(function() {
-						var setSize = function() { 
-							this.image.inject(this.messageBox).store("dimensions", this.image.getSize()); 
+						var setSize = function() {
+							this.image.inject(this.messageBox).store("dimensions", this.image.getSize());
 						}.bind(this);
 						setSize();
 						this._resize();
@@ -91,7 +91,7 @@ LightFace.Image = new Class({
 			}
 		});
 		this.image.src = url || this.options.url;
-		if(title && this.title) this.title.set("html", title);	
+		if(title && this.title) this.title.set("html", title);
 		return this;
 	}
 });
